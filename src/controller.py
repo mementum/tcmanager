@@ -123,17 +123,11 @@ class Controller(object):
 
     @ViewManager
     def OnCheckBoxUploadUseAvailableCatalog(self, event):
-        self._model.uploaduseavailablecatalog = ischecked = event.IsChecked()
-        if False:
-            if ischecked:
-                self._view.m_textCtrlCatalogName.Disable()
-                self._view.m_choiceUploadCatalogs.Enable()
-                self._view.m_buttonUploadReloadCatalogs.Enable()
-            else:
-                self._view.m_textCtrlCatalogName.Enable()
-                self._view.m_choiceUploadCatalogs.Disable()
-                self._view.m_buttonUploadReloadCatalogs.Disable()
+        self._model.uploadusecatalog = event.IsChecked()
 
+    @ViewManager
+    def OnCheckBoxUploadUpdateTc(self, event):
+        self._model.uploadupdatetc = event.IsChecked()
 
     @ViewManager
     def OnKillFocusUploadCatalogName(self, event):
@@ -143,13 +137,18 @@ class Controller(object):
     def OnButtonClickUploadExcel(self, event):
         catname = self._model.uploadcatalogname
         # First check if there is any catalog name
-        if not catname:
+        if not self._model.uploadusecatalog and not catname:
             self._view.DisplayError('No Catalog Name given')
             return
 
-        if catname in self._model.catalogs:
+        if not self._model.uploadusecatalog and catname in self._model.catalogs:
             self._view.DisplayError('Existing Catalog. Delete it first')
             return
+
+        if self._model.uploadusecatalog:
+            item = self.m_choiceUploadCatalogs.GetSelection()
+            catalog = self.m_choiceUploadCatalogs.GetSelection(item)
+            self._model.uploadusecatalogid = catalog[0]
 
         self._model.UploadExcel()
         self._view.UploadingExcel()

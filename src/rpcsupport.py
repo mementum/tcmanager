@@ -87,5 +87,5 @@ class RpcInterface(object):
     def listTestPlans(self, catid):
         return self.server.testmanager.listTestPlans(catid)
 
-    def listTestCasesExt(self, catid, plan_id=''):
-        return self.server.testmanager.listTestCasesExt(catid, plan_id)
+    def listTestCasesExt(self, catid, plan_id='', deep=False):
+        return self.server.testmanager.listTestCasesExt(catid, plan_id, deep)

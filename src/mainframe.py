@@ -70,6 +70,8 @@ class MainFrame(maingui.MainFrame):
         ############################################################
         self.m_filePickerExcelUpload.SetPath(self._model.uploadexcel)
         self.m_textCtrlUploadCatalogName.SetValue(self._model.uploadcatalogname)
+        self.m_checkBoxUploadUseAvailableCatalog.SetValue(self._model.uploadusecatalog)
+        self.m_checkBoxUploadUpdateTc.SetValue(self._model.uploadupdatetc)
 
         ############################################################
         # DOWNLOAD CONFIG

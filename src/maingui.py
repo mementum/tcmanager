@@ -138,7 +138,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel8.SetSizer( bSizer12 )
 		self.m_panel8.Layout()
 		bSizer12.Fit( self.m_panel8 )
-		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", True )
+		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", False )
 		self.m_panel9 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer2 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -222,12 +222,17 @@ class MainFrame ( wx.Frame ):
 		
 		fgSizer2.Add( bSizer20, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
-		self.m_staticText1 = wx.StaticText( self.m_panel9, wx.ID_ANY, u"Catalog Name", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText1 = wx.StaticText( self.m_panel9, wx.ID_ANY, u"New Catalog", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText1.Wrap( -1 )
 		fgSizer2.Add( self.m_staticText1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
+		bSizer30 = wx.BoxSizer( wx.HORIZONTAL )
+		
 		self.m_textCtrlUploadCatalogName = wx.TextCtrl( self.m_panel9, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer2.Add( self.m_textCtrlUploadCatalogName, 0, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.ALL, 5 )
+		bSizer30.Add( self.m_textCtrlUploadCatalogName, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL|wx.EXPAND, 5 )
+		
+		
+		fgSizer2.Add( bSizer30, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
 		sbSizer3.Add( fgSizer2, 1, wx.EXPAND, 5 )
@@ -235,17 +240,13 @@ class MainFrame ( wx.Frame ):
 		bSizer19 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_checkBoxUploadUseAvailableCatalog = wx.CheckBox( self.m_panel9, wx.ID_ANY, u"Use Available Catalog", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_checkBoxUploadUseAvailableCatalog.Enable( False )
-		
 		bSizer19.Add( self.m_checkBoxUploadUseAvailableCatalog, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
 		self.m_staticline9 = wx.StaticLine( self.m_panel9, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
 		bSizer19.Add( self.m_staticline9, 0, wx.EXPAND |wx.ALL, 5 )
 		
-		self.m_checkBox2 = wx.CheckBox( self.m_panel9, wx.ID_ANY, u"Update if available", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_checkBox2.Enable( False )
-		
-		bSizer19.Add( self.m_checkBox2, 0, wx.ALL, 5 )
+		self.m_checkBoxUploadUpdateTc = wx.CheckBox( self.m_panel9, wx.ID_ANY, u"Update Test Cases", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer19.Add( self.m_checkBoxUploadUpdateTc, 0, wx.ALL, 5 )
 		
 		
 		sbSizer3.Add( bSizer19, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
@@ -260,7 +261,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel9.SetSizer( bSizer2 )
 		self.m_panel9.Layout()
 		bSizer2.Fit( self.m_panel9 )
-		self.m_notebook1.AddPage( self.m_panel9, u"Test Cases Upload", False )
+		self.m_notebook1.AddPage( self.m_panel9, u"Test Cases Upload", True )
 		self.m_panel10 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer11 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -473,6 +474,7 @@ class MainFrame ( wx.Frame ):
 		self.m_checkBoxUploadAutoLoadCatalogs.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxUploadAutoLoadCatalogs )
 		self.m_textCtrlUploadCatalogName.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusUploadCatalogName )
 		self.m_checkBoxUploadUseAvailableCatalog.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxUploadUseAvailableCatalog )
+		self.m_checkBoxUploadUpdateTc.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxUploadUpdateTc )
 		self.m_button2.Bind( wx.EVT_BUTTON, self.OnButtonClickUploadExcel )
 		self.m_choiceDownloadCatalogs.Bind( wx.EVT_CHOICE, self.OnChoiceDownloadCatalogs )
 		self.m_button11.Bind( wx.EVT_BUTTON, self.OnButtonClickUploadReloadCatalogs )
@@ -538,6 +540,9 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 	
 	def OnCheckBoxUploadUseAvailableCatalog( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxUploadUpdateTc( self, event ):
 		event.Skip()
 	
 	def OnButtonClickUploadExcel( self, event ):

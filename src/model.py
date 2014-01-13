@@ -23,6 +23,9 @@ import itertools
 import threading
 
 import openpyxl
+import pythoncom
+from win32com.client import Dispatch
+import win32com.client.gencache
 import xlrd
 import xlsxwriter
 
@@ -39,10 +42,12 @@ class Model(object):
     serverpassword = ConfigString(name='serverpassword', defvalue='')
 
     uploadexcel = ConfigString(name='uploadexcel', defvalue='')
-    # uploaduseavailablecatalog = ConfigBool(name='uploaduseavailablecatalog', defvalue=False)
-    uploadcatalogname = ConfigString(name='uploaduseavailablecatalog', defvalue='')
+    uploadcatalogname = ConfigString(name='uploadcatalogname', defvalue='')
     uploadautosheets = ConfigBool(name='uploadautosheets', defvalue=False)
     uploadautocatalogs = ConfigBool(name='uploadautocatalogs', defvalue=False)
+
+    uploadusecatalog = ConfigBool(name='uploadusecatalog', defvalue=False)
+    uploadupdatetc = ConfigBool(name='uploadupdatetc', defvalue=False)
 
     downloadexcel = ConfigString(name='downloadexcel', defvalue='')
 
@@ -344,7 +349,6 @@ class Model(object):
 
         return parsed
 
-
     @PubSend('testplans')
     def GetTestPlans(self, catalog):
         rpc = RpcInterface(self.serverurl, self.serverusername, self.serverpassword)
@@ -359,63 +363,72 @@ class Model(object):
 
     @PubSend('downloadedexcel')
     def LifeCardDownloadingExcel(self):
-        # custommap = {'comment': 2, 'tracefile': 3, 'testednetwork': 4, 'tester': 5}
-        custommap = {'comment': 2, 'tracefile': 3, 'testednetwork': 4}
+        custommap = {'comment': 1, 'tracefile': 2, 'testednetwork': 3}
+        statusmap = {
+            'to_be_tested': 'To Be Tested',
+            'successful': 'Passed', 'passed': 'Passed',
+            'failed': 'Failed',
+            'skipped': 'Skipped', 'na': 'N/A', 'investigation': 'Investigation',
+        }
         try:
             self.LogAppend('Compiling list of TestCases from server')
-            # need to iterate recursively down to catalogs
-            # Connect to Server
-
-            catalogs = [self.lifecardcatalog]
-            self.LogAppend('Start testcases export')
-
             self.LogAppend('Creating Workbook %s' % self.lifecardexcel)
-            wb = xlsxwriter.Workbook(self.lifecardexcel)
-            self.LogAppend('First Tab - Test Cases')
-            wksheet = wb.add_worksheet('Test Cases')
 
+            pythoncom.CoInitialize()
+            # xl = Dispatch('Excel.Application')
+            xl = win32com.client.gencache.EnsureDispatch ("Excel.Application")
+            xl.Visible = 0
+            wkbook = xl.Workbooks.Open(self.lifecardexcel)
+            wksheet = wkbook.Sheets('Test Cases')
+            wkscell = wksheet.Cells
+
+            self.LogAppend('First Tab - Test Cases')
             self.LogAppend('Creating an RPC interface to the server')
             rpcinterface = RpcInterface(self.serverurl, self.serverusername, self.serverpassword)
 
             self.LogAppend('Start processing catalogs')
-            row = 0
-            while catalogs:
-                nextcatalogs = list()
-                self.LogAppend('Iterating over %d catalogs' % len(catalogs))
-                for catalog in catalogs:
-                    subcatalogs = rpcinterface.listSubCatalogs(catalog[0])
-                    nextcatalogs.extend(subcatalogs)
-                    self.LogAppend('Got Catalogs %s' % str(subcatalogs))
+            self.LogAppend('Getting testcases of current catalog and testplan')
+            tcips = rpcinterface.listTestCasesExt(self.lifecardcatalog[0], self.lifecardtestplan[0], True)
+            self.LogAppend('Got %d testcases, processing them' % len(tcips))
+            row = 4 # same as in lifecard
+            coloffset = 6
 
+            # Build a dict of the testcases for quick retrieval below
+            tcipmap = dict(map(lambda x: (x[3], x), tcips))
+            dcounter = itertools.count()
+            xrows = itertools.count(4)
+            for xrow in xrows:
+                # tctitle = wksheet.Cells(xrow, 2).Value
+                tctitle = wkscell(xrow, 3).Value
+                if not tctitle:
+                    break
+                self.LogAppend('Filtering tcips against %s' % tctitle)
+                try:
+                    tcip = tcipmap[tctitle]
+                except:
+                    self.LogAppend('Testcase not found in dictionary. Default To Be Tested')
+                    wkscell(row, coloffset + 0).Value = 'To Be Tested' # status
+                    continue
 
-                    self.LogAppend('Getting testcases of current catalog and testplan')
-                    tcips = rpcinterface.listTestCasesExt(catalog[0], self.lifecardtestplan[0])
-                    self.LogAppend('Got %d testcases, processing them' % len(tcips))
-                    for tcip in tcips:
-                        _tcip = TestCaseInPlan(tcip)
-                        self.LogAppend('Writing testcase %s' % _tcip.title)
-                        wksheet.write(row, 0, _tcip.title) # title
-                        wksheet.write(row, 1, _tcip.status) # status
+                _tcip = TestCaseInPlan(tcip)
+                self.LogAppend('Writing testcase %s' % _tcip.title)
+                # wksheet.Cells(row, 5).Value = _tcip.title # title
+                print statusmap[_tcip.status] # status
+                wkscell(xrow, coloffset + 0).Value = statusmap[_tcip.status] # status
+                for custfield in _tcip.customfields: # customfields
+                    if custfield.name in custommap:
+                        custcol = custommap[custfield.name]
+                        custvalue = custfield.value
+                        wkscell(xrow, coloffset + custcol).Value = custvalue
 
-                        for custfield in _tcip.customfields: # customfields
-                            if False:
-                                custname = custfield[0]
-                                custcol = custommap[custname]
-                                custvalue = custfield[1]
-                            else:
-                                if custfield.name in custommap:
-                                    custcol = custommap[custfield.name]
-                                    custvalue = custfield.value
-                                    wksheet.write(row, custcol, custvalue)
-
-                        wksheet.write(row, 5, _tcip.author) # timestamp
-                        wksheet.write(row, 6, _tcip.timestamp.split('T')[0]) # timestamp
-                        row += 1
-
-                catalogs = nextcatalogs
-
-            wb.close()
+                    wkscell(xrow, coloffset + 4).Value = _tcip.author # timestamp
+                    wkscell(xrow, coloffset + 5).Value =_tcip.timestamp.split('T')[0] # timestamp
+                
             self.LogAppend('End downloading test-case-in-plan information')
 
         except Exception, e:
             self.LogAppend('Error during Download to LifeCard: %s' % str(e))
+
+        if wkbook:
+            wkbook.Save()
+            wkbook.Close(False)
