@@ -432,9 +432,9 @@ class Model(object):
             xl.Interactive = False
             wkbook = xl.Workbooks.Open(self.lifecardexcel)
             wksheet = wkbook.Sheets('Test Cases')
+            self.LogAppend('Writing Data to Worksheet')
             topleft = wksheet.Cells(4, 1)
             botright = wksheet.Cells(4 + len(lrange) - 1, 1 + len(lrange[0]) - 1)
-            self.LogAppend('Writing Data to Worksheet')
             wksheet.Range(topleft, botright).Value = lrange
 
             self.LogAppend('End downloading test-case-in-plan information')

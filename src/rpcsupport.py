@@ -58,7 +58,7 @@ class RpcInterface(object):
         '''
         return self.server.testmanager.listSubCatalogs(catid)
 
-    def listSubCatalogsExt(self, catid):
+    def listSubCatalogsExt(self, catid=''):
         '''
         Returns a list of subcatalogs of "catid". Use -1 to list the catalogs from the root.
 
