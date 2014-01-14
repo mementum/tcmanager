@@ -495,10 +495,16 @@ class Model(object):
             self.LogAppend('Generating Excel Data Range')
             lrange = list()
             for ticket in tickets:
-                if ticket.owner != 'zyxel' and ticket.status != 'investigation':
-                    continue
+                if False:
+                    if ticket.owner != 'zyxel' and ticket.status != 'investigation':
+                        continue
+                else:
+                    if ticket.status in ['rejected', 'new',]:
+                        continue
                 lticket = list()
-                lticket.extend([ticket.id, ticket.version, ticket.reporter, ticket.description])
+                lticket.extend([ticket.id, ticket.version, ticket.reporter])
+                # lticket.append('%s\n%s' % (ticket.summary, ticket.description))
+                lticket.append('%s\n---------------------\n%s' % (ticket.summary, ticket.description))
                 if ticket.testcaseid in tcases:
                     lticket.append(tcases[ticket.testcaseid].title)
                 else:
