@@ -19,7 +19,8 @@
 #
 ################################################################################
 import collections
-
+import datetime
+import xmlrpclib
 
 class TcGeneric(object):
     '''
@@ -29,9 +30,17 @@ class TcGeneric(object):
     def __init__(self, data):
         for attrindex, attrname in enumerate(self.attrmap):
             field = data[attrindex]
-            if isinstance(field, basestring):
+            if isinstance(field, (basestring, bool, float, int,)):
                 setattr(self, attrname, field)
+            elif isinstance(field, xmlrpclib.DateTime):
+                dt = datetime.datetime.strptime(field.value, "%Y%m%dT%H:%M:%S")
+                setattr(self, attrname, dt)
+            elif isinstance(field, dict):
+                setattr(self, attrname, field)
+                for name, value in field.iteritems():
+                    setattr(self, name, value)
             elif isinstance(field, collections.Iterable):
+                setattr(self, attrname, field)
                 for elem in field:
                     setattr(self, elem[0], elem[1])
             else:
@@ -95,3 +104,6 @@ class TestCaseInPlan(TcGeneric):
 
     def get_status(self):
         return self.statusmap[self.status]
+
+class Ticket(TcGeneric):
+    attrmap = ['id', 'created', 'changed', 'values',]

@@ -209,5 +209,11 @@ class Controller(object):
         self._view.LifeCardDownloadingExcel()
 
     @ViewManager
+    def OnButtonClickLifeCardDownloadBugs(self, event):
+        self._model.LifeCardDownloadBugsExcel()
+        self._view.LifeCardDownloadingBugsExcel()
+
+
+    @ViewManager
     def OnCheckBoxLifeCardOverwriteTestCases(self, event):
         self._model.lcovertestcases = event.IsChecked()

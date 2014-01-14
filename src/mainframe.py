@@ -196,7 +196,7 @@ class MainFrame(maingui.MainFrame):
     #@PubSubscribe('downloadingexcel')
     def DownloadingExcel(self):
         self.dlgupexcel = DialogLongOp(self,
-                                       message='Please do not touch anything until you see the\n'
+                                       message='Please do not touch anything until you see\n'
                                        'an error in the log or the indication the\n'
                                        'the process is over',
                                        caption='Downloading TestCases to Excel',
@@ -257,7 +257,7 @@ class MainFrame(maingui.MainFrame):
     #@PubSubscribe('lifecarddownloadingexcel')
     def LifeCardDownloadingExcel(self):
         self.dlgupexcel = DialogLongOp(self,
-                                       message='Please do not touch anything until you see the\n'
+                                       message='Please do not touch anything until you see\n'
                                        'an error in the log or the indication the\n'
                                        'the process is over',
                                        caption='Downloading LifeCard to Excel',
@@ -267,6 +267,25 @@ class MainFrame(maingui.MainFrame):
         self.dlgupexcel = None
 
     @PubSubscribe('lifecarddownloadedexcel')
-    def OnLifeCardDownloadedExcel(self, msg):
+    def OnLifeCardDownloadedBugsExcel(self, msg):
         if self.dlgupexcel:
             self.dlgupexcel.EndModal(wx.ID_OK)
+
+
+    #@PubSubscribe('lifecarddownloadingbugsexcel')
+    def LifeCardDownloadingBugsExcel(self):
+        self.dlgupexcel = DialogLongOp(self,
+                                       message='Please do not touch anything until you see\n'
+                                       'an error in the log or the indication the\n'
+                                       'the process is over',
+                                       caption='Downloading LifeCard to Excel',
+                                       style=wx.ICON_EXCLAMATION | wx.OK)
+
+        retval = self.dlgupexcel.ShowModal()
+        self.dlgupexcel = None
+
+    @PubSubscribe('lifecarddownloadedbugsexcel')
+    def OnLifeCardDownloadedBugsExcel(self, msg):
+        if self.dlgupexcel:
+            self.dlgupexcel.EndModal(wx.ID_OK)
+

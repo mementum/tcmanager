@@ -261,7 +261,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel9.SetSizer( bSizer2 )
 		self.m_panel9.Layout()
 		bSizer2.Fit( self.m_panel9 )
-		self.m_notebook1.AddPage( self.m_panel9, u"Test Cases Upload", True )
+		self.m_notebook1.AddPage( self.m_panel9, u"Test Cases Upload", False )
 		self.m_panel10 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer11 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -403,14 +403,22 @@ class MainFrame ( wx.Frame ):
 		self.m_staticline142 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		bSizer24.Add( self.m_staticline142, 0, wx.EXPAND |wx.ALL, 5 )
 		
-		self.m_button20 = wx.Button( self.m_panel7, wx.ID_ANY, u"Download to LifeCard", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer24.Add( self.m_button20, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		bSizer26 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_button20 = wx.Button( self.m_panel7, wx.ID_ANY, u"Download TestCases to LifeCard", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer26.Add( self.m_button20, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		self.m_button17 = wx.Button( self.m_panel7, wx.ID_ANY, u"Download Bugs to LifeCard", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer26.Add( self.m_button17, 0, wx.ALL, 5 )
+		
+		
+		bSizer24.Add( bSizer26, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
 		
 		self.m_panel7.SetSizer( bSizer24 )
 		self.m_panel7.Layout()
 		bSizer24.Fit( self.m_panel7 )
-		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", False )
+		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", True )
 		
 		bSizer16.Add( self.m_notebook1, 1, wx.EXPAND, 5 )
 		
@@ -486,6 +494,7 @@ class MainFrame ( wx.Frame ):
 		self.m_filePickerLifeCardExcel.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChangedLifeCardExcel )
 		self.m_checkBoxLifeCardOverwriteTestCases.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLifeCardOverwriteTestCases )
 		self.m_button20.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardDownload )
+		self.m_button17.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardDownloadBugs )
 		self.m_button7.Bind( wx.EVT_BUTTON, self.OnButtonClearLog )
 		self.m_button6.Bind( wx.EVT_BUTTON, self.OnButtonClickExit )
 		self.m_button5.Bind( wx.EVT_BUTTON, self.OnButtonClickClearRegistry )
@@ -572,6 +581,9 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 	
 	def OnButtonClickLifeCardDownload( self, event ):
+		event.Skip()
+	
+	def OnButtonClickLifeCardDownloadBugs( self, event ):
 		event.Skip()
 	
 	def OnButtonClearLog( self, event ):

@@ -18,10 +18,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ################################################################################
-
 import urlparse
 import xmlrpclib
-
 
 class RpcInterface(object):
 
@@ -89,3 +87,9 @@ class RpcInterface(object):
 
     def listTestCasesExt(self, catid, plan_id='', deep=False):
         return self.server.testmanager.listTestCasesExt(catid, plan_id, deep)
+
+    def getRecentChanges(self, since):
+        return self.server.ticket.getRecentChanges(xmlrpclib.DateTime(since))
+
+    def multicall(self):
+        return xmlrpclib.MultiCall(self.server)

@@ -19,6 +19,7 @@
 #
 ################################################################################
 from collections import OrderedDict
+import datetime
 import itertools
 from operator import attrgetter
 import threading
@@ -34,7 +35,7 @@ from config import ConfigPrefix, ConfigString, ConfigBool
 # from excelsupport import ExcelFile
 from mvcbase import ModelRole, PubSend
 from rpcsupport import RpcInterface
-from tcmodel import TestCatalog, TestCase, TestCaseInPlan
+from tcmodel import TestCatalog, TestCase, TestCaseInPlan, Ticket
 
 @ModelRole
 class Model(object):
@@ -362,7 +363,7 @@ class Model(object):
         th = threading.Thread(target=self.LifeCardDownloadingExcel)
         th.start()
 
-    @PubSend('downloadedexcel')
+    @PubSend('lifecarddownloadedexcel')
     def LifeCardDownloadingExcel(self):
         '''
         How it works:
@@ -378,8 +379,9 @@ class Model(object):
          -- Save, Close and Quit Excel
         '''
         wkbook = None
+        tc_row_offset = 2
+        tc_col_offset = 1
         try:
-            self.LogAppend('First Tab - Test Cases')
             self.LogAppend('Creating an RPC interface to the server')
             rpc = RpcInterface(self.serverurl, self.serverusername, self.serverpassword)
 
@@ -423,6 +425,9 @@ class Model(object):
                 print "elements 0", lrange[0]
                 #raise Exception('Finished compiling test cases and catalogs')
 
+            if not lrange:
+                raise Exception('No test cases to write down to Excel')
+
             self.LogAppend('Opening Workbook %s' % self.lifecardexcel)
             pythoncom.CoInitialize()
             # xl = Dispatch('Excel.Application')
@@ -432,8 +437,90 @@ class Model(object):
             xl.Interactive = False
             wkbook = xl.Workbooks.Open(self.lifecardexcel)
             wksheet = wkbook.Sheets('Test Cases')
-            topleft = wksheet.Cells(4, 1)
-            botright = wksheet.Cells(4 + len(lrange) - 1, 1 + len(lrange[0]) - 1)
+            topleft = wksheet.Cells(tc_row_offset, tc_col_offset)
+            botright = wksheet.Cells(tc_row_offset + len(lrange) - 1, tc_col_offset + len(lrange[0]) - 1)
+            self.LogAppend('Writing Data to Worksheet')
+            wksheet.Range(topleft, botright).Value = lrange
+
+            self.LogAppend('End downloading test-case-in-plan information')
+
+        except Exception, e:
+            self.LogAppend('Error during Download to LifeCard: %s' % str(e))
+
+        if wkbook:
+            try:
+                self.LogAppend('Saving and closing worksheet. Quitting Excel')
+                wkbook.Save()
+                wkbook.Close(False)
+                xl.Quit()
+            except Exception, e:
+                self.LogAppend('Error saving/closing/quitting Excel file: %s' % str(e))
+
+
+    #@PubSend('lifecarddownloadingexcel')
+    def LifeCardDownloadBugsExcel(self):
+        th = threading.Thread(target=self.LifeCardDownloadingBugsExcel)
+        th.start()
+
+    @PubSend('lifecarddownloadedbugsexcel')
+    def LifeCardDownloadingBugsExcel(self):
+        '''
+        How it works:
+         -- To Be Done
+        '''
+        wkbook = None
+        ticket_row_offset = 2
+        ticket_col_offset = 4
+        try:
+            self.LogAppend('Creating an RPC interface to the server')
+            rpc = RpcInterface(self.serverurl, self.serverusername, self.serverpassword)
+
+            # Get Test Cases (for additional needed fields)
+            self.LogAppend('Compiling list of TestCases for reference')
+            tcases = rpc.listTestCasesExt(self.lifecardcatalog[0], '', True) # Get from server
+            tcases = map(TestCase, tcases) # Create the objects
+            tcases = dict(map(lambda x: (x.page_name, x), tcases)) # make a page_name indexed dict
+
+            self.LogAppend('Compiling ticket list')
+            since = datetime.datetime(year=2014, month=1, day=1)
+            ticket_ids = rpc.getRecentChanges(since)
+            multicall = rpc.multicall()
+
+            self.LogAppend('Getting tickets')
+            for ticket_id in ticket_ids:
+                multicall.ticket.get(ticket_id)
+            tickets = map(Ticket, multicall())
+            tickets.sort(key=attrgetter('id'))
+
+            self.LogAppend('Generating Excel Data Range')
+            lrange = list()
+            for ticket in tickets:
+                if ticket.owner != 'zyxel' and ticket.status != 'investigation':
+                    continue
+                lticket = list()
+                lticket.extend([ticket.id, ticket.version, ticket.reporter, ticket.description])
+                if ticket.testcaseid in tcases:
+                    lticket.append(tcases[ticket.testcaseid].title)
+                else:
+                    lticket.append('Exploratory Testing')
+                lticket.append(ticket.status.capitalize())
+                lticket.extend([ticket.priority, '', ticket.created])
+
+                lrange.append(lticket)
+            # raise Exception('Ticket List Compiled')
+
+
+            self.LogAppend('Opening Workbook %s' % self.lifecardexcel)
+            pythoncom.CoInitialize()
+            # xl = Dispatch('Excel.Application')
+            # xl = win32com.client.gencache.EnsureDispatchEx("Excel.Application")
+            xl = DispatchEx('Excel.Application') # Opens different instance
+            xl.Visible = 1
+            xl.Interactive = True
+            wkbook = xl.Workbooks.Open(self.lifecardexcel)
+            wksheet = wkbook.Sheets('Bug Tracking')
+            topleft = wksheet.Cells(ticket_row_offset, ticket_col_offset)
+            botright = wksheet.Cells(ticket_row_offset + len(lrange) - 1, ticket_col_offset + len(lrange[0]) - 1)
             self.LogAppend('Writing Data to Worksheet')
             wksheet.Range(topleft, botright).Value = lrange
 
