@@ -209,11 +209,14 @@ class Controller(object):
         self._view.LifeCardDownloadingExcel()
 
     @ViewManager
-    def OnButtonClickLifeCardDownloadBugs(self, event):
-        self._model.LifeCardDownloadBugsExcel()
-        self._view.LifeCardDownloadingBugsExcel()
-
-
-    @ViewManager
     def OnCheckBoxLifeCardOverwriteTestCases(self, event):
         self._model.lcovertestcases = event.IsChecked()
+
+    @ViewManager
+    def OnDirChangedDirAttachments(self, event):
+        self._model.lifecardattachdir = self._view.m_dirPickerDirAttachments.GetPath()
+
+    @ViewManager
+    def OnButtonClickDownloadAttachments(self, event):
+        self._model.LifeCardDownloadAttach()
+        self._view.LifeCardDownloadingAttach()

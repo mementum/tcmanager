@@ -394,6 +394,13 @@ class MainFrame ( wx.Frame ):
 		
 		fgSizer211.Add( self.m_checkBoxLifeCardOverwriteTestCases, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
+		self.m_staticText16 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Attachement Dir", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText16.Wrap( -1 )
+		fgSizer211.Add( self.m_staticText16, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_dirPickerDirAttachments = wx.DirPickerCtrl( self.m_panel7, wx.ID_ANY, wx.EmptyString, u"Select a folder", wx.DefaultPosition, wx.DefaultSize, wx.DIRP_DEFAULT_STYLE )
+		fgSizer211.Add( self.m_dirPickerDirAttachments, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
 		
 		sbSizer321.Add( fgSizer211, 1, wx.EXPAND, 5 )
 		
@@ -408,11 +415,16 @@ class MainFrame ( wx.Frame ):
 		self.m_button20 = wx.Button( self.m_panel7, wx.ID_ANY, u"Download TestCases to LifeCard", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer26.Add( self.m_button20, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
-		self.m_button17 = wx.Button( self.m_panel7, wx.ID_ANY, u"Download Bugs to LifeCard", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_button17 = wx.Button( self.m_panel7, wx.ID_ANY, u"Download Attachments", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer26.Add( self.m_button17, 0, wx.ALL, 5 )
 		
 		
 		bSizer24.Add( bSizer26, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer27 = wx.BoxSizer( wx.VERTICAL )
+		
+		
+		bSizer24.Add( bSizer27, 1, wx.EXPAND, 5 )
 		
 		
 		self.m_panel7.SetSizer( bSizer24 )
@@ -493,8 +505,9 @@ class MainFrame ( wx.Frame ):
 		self.m_button19.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardTestPlansReload )
 		self.m_filePickerLifeCardExcel.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChangedLifeCardExcel )
 		self.m_checkBoxLifeCardOverwriteTestCases.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLifeCardOverwriteTestCases )
+		self.m_dirPickerDirAttachments.Bind( wx.EVT_DIRPICKER_CHANGED, self.OnDirChangedDirAttachments )
 		self.m_button20.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardDownload )
-		self.m_button17.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardDownloadBugs )
+		self.m_button17.Bind( wx.EVT_BUTTON, self.OnButtonClickDownloadAttachments )
 		self.m_button7.Bind( wx.EVT_BUTTON, self.OnButtonClearLog )
 		self.m_button6.Bind( wx.EVT_BUTTON, self.OnButtonClickExit )
 		self.m_button5.Bind( wx.EVT_BUTTON, self.OnButtonClickClearRegistry )
@@ -580,10 +593,13 @@ class MainFrame ( wx.Frame ):
 	def OnCheckBoxLifeCardOverwriteTestCases( self, event ):
 		event.Skip()
 	
+	def OnDirChangedDirAttachments( self, event ):
+		event.Skip()
+	
 	def OnButtonClickLifeCardDownload( self, event ):
 		event.Skip()
 	
-	def OnButtonClickLifeCardDownloadBugs( self, event ):
+	def OnButtonClickDownloadAttachments( self, event ):
 		event.Skip()
 	
 	def OnButtonClearLog( self, event ):

@@ -22,6 +22,7 @@ from collections import OrderedDict
 import datetime
 import itertools
 from operator import attrgetter
+import os
 import threading
 
 import openpyxl
@@ -54,6 +55,7 @@ class Model(object):
     downloadexcel = ConfigString(name='downloadexcel', defvalue='')
 
     lifecardexcel = ConfigString(name='lifecardexcel', defvalue='')
+    lifecardattachdir = ConfigString(name='lifecardattachdir', defvalue='')
     lcovertestcases = ConfigBool(name='lcovertestcases', defvalue=False)
 
     def __init__(self):
@@ -381,6 +383,8 @@ class Model(object):
         wkbook = None
         tc_row_offset = 2
         tc_col_offset = 1
+        ticket_row_offset = 2
+        ticket_col_offset = 4
         try:
             self.LogAppend('Creating an RPC interface to the server')
             rpc = RpcInterface(self.serverurl, self.serverusername, self.serverpassword)
@@ -395,8 +399,9 @@ class Model(object):
             # Get Test Cases (for additional needed fields)
             self.LogAppend('Compiling list of TestCases from server')
             tcases = rpc.listTestCasesExt(self.lifecardcatalog[0], '', True) # Get from server
-            tcases = map(TestCase, tcases) # Create the objects
-            tcases = dict(map(lambda x: (x.title, x), tcases)) # make a title indexed
+            it_tcases = map(TestCase, tcases) # Create the objects
+            tcases = dict(map(lambda x: (x.title, x), it_tcases)) # make a title indexed
+            tcasesb = dict(map(lambda x: (x.page_name, x), it_tcases)) # make a page_name indexed dict
 
             # Get the Test Catalogs and build a dictionary of ids / we only have two levels
             self.LogAppend('Start processing catalogs')
@@ -425,61 +430,6 @@ class Model(object):
                 print "elements 0", lrange[0]
                 #raise Exception('Finished compiling test cases and catalogs')
 
-            if not lrange:
-                raise Exception('No test cases to write down to Excel')
-
-            self.LogAppend('Opening Workbook %s' % self.lifecardexcel)
-            pythoncom.CoInitialize()
-            # xl = Dispatch('Excel.Application')
-            # xl = win32com.client.gencache.EnsureDispatchEx("Excel.Application")
-            xl = DispatchEx('Excel.Application') # Opens different instance
-            xl.Visible = 1
-            xl.Interactive = False
-            wkbook = xl.Workbooks.Open(self.lifecardexcel)
-            wksheet = wkbook.Sheets('Test Cases')
-            topleft = wksheet.Cells(tc_row_offset, tc_col_offset)
-            botright = wksheet.Cells(tc_row_offset + len(lrange) - 1, tc_col_offset + len(lrange[0]) - 1)
-            self.LogAppend('Writing Data to Worksheet')
-            wksheet.Range(topleft, botright).Value = lrange
-
-            self.LogAppend('End downloading test-case-in-plan information')
-
-        except Exception, e:
-            self.LogAppend('Error during Download to LifeCard: %s' % str(e))
-
-        if wkbook:
-            try:
-                self.LogAppend('Saving and closing worksheet. Quitting Excel')
-                wkbook.Save()
-                wkbook.Close(False)
-                xl.Quit()
-            except Exception, e:
-                self.LogAppend('Error saving/closing/quitting Excel file: %s' % str(e))
-
-
-    #@PubSend('lifecarddownloadingexcel')
-    def LifeCardDownloadBugsExcel(self):
-        th = threading.Thread(target=self.LifeCardDownloadingBugsExcel)
-        th.start()
-
-    @PubSend('lifecarddownloadedbugsexcel')
-    def LifeCardDownloadingBugsExcel(self):
-        '''
-        How it works:
-         -- To Be Done
-        '''
-        wkbook = None
-        ticket_row_offset = 2
-        ticket_col_offset = 4
-        try:
-            self.LogAppend('Creating an RPC interface to the server')
-            rpc = RpcInterface(self.serverurl, self.serverusername, self.serverpassword)
-
-            # Get Test Cases (for additional needed fields)
-            self.LogAppend('Compiling list of TestCases for reference')
-            tcases = rpc.listTestCasesExt(self.lifecardcatalog[0], '', True) # Get from server
-            tcases = map(TestCase, tcases) # Create the objects
-            tcases = dict(map(lambda x: (x.page_name, x), tcases)) # make a page_name indexed dict
 
             self.LogAppend('Compiling ticket list')
             since = datetime.datetime(year=2014, month=1, day=1)
@@ -492,27 +442,23 @@ class Model(object):
             tickets = map(Ticket, multicall())
             tickets.sort(key=attrgetter('id'))
 
-            self.LogAppend('Generating Excel Data Range')
-            lrange = list()
+            self.LogAppend('Generating Excel Data Range for tickets')
+            ltrange = list()
             for ticket in tickets:
-                if False:
-                    if ticket.owner != 'zyxel' and ticket.status != 'investigation':
-                        continue
-                else:
-                    if ticket.status in ['rejected', 'new',]:
-                        continue
+                if ticket.status in ['new',]:
+                    continue
                 lticket = list()
                 lticket.extend([ticket.id, ticket.version, ticket.reporter])
                 # lticket.append('%s\n%s' % (ticket.summary, ticket.description))
                 lticket.append('%s\n---------------------\n%s' % (ticket.summary, ticket.description))
                 if ticket.testcaseid in tcases:
-                    lticket.append(tcases[ticket.testcaseid].title)
+                    lticket.append(tcasesb[ticket.testcaseid].title)
                 else:
                     lticket.append('Exploratory Testing')
                 lticket.append(ticket.status.capitalize())
                 lticket.extend([ticket.priority, '', ticket.created])
 
-                lrange.append(lticket)
+                ltrange.append(lticket)
             # raise Exception('Ticket List Compiled')
 
 
@@ -522,19 +468,33 @@ class Model(object):
             # xl = win32com.client.gencache.EnsureDispatchEx("Excel.Application")
             xl = DispatchEx('Excel.Application') # Opens different instance
             xl.Visible = 1
-            xl.Interactive = True
+            xl.Interactive = False
             wkbook = xl.Workbooks.Open(self.lifecardexcel)
-            wksheet = wkbook.Sheets('Bug Tracking')
-            topleft = wksheet.Cells(ticket_row_offset, ticket_col_offset)
-            botright = wksheet.Cells(ticket_row_offset + len(lrange) - 1, ticket_col_offset + len(lrange[0]) - 1)
-            self.LogAppend('Writing Data to Worksheet')
-            wksheet.Range(topleft, botright).Value = lrange
 
-            self.LogAppend('End downloading test-case-in-plan information')
+            if not lrange:
+                self.LogAppend('No test cases to write down to Excel')
+            else:
+                wksheet = wkbook.Sheets('Test Cases')
+                topleft = wksheet.Cells(tc_row_offset, tc_col_offset)
+                botright = wksheet.Cells(tc_row_offset + len(lrange) - 1, tc_col_offset + len(lrange[0]) - 1)
+                self.LogAppend('Writing Data to Worksheet')
+                wksheet.Range(topleft, botright).Value = lrange
+                self.LogAppend('End downloading test-case-in-plan information')
+
+            if not ltrange:
+                self.LogAppend('No tickets to write down to Excel')
+            else:
+                wksheet = wkbook.Sheets('Bug Tracking')
+                topleft = wksheet.Cells(ticket_row_offset, ticket_col_offset)
+                botright = wksheet.Cells(ticket_row_offset + len(ltrange) - 1, ticket_col_offset + len(ltrange[0]) - 1)
+                self.LogAppend('Writing Data to Worksheet')
+                wksheet.Range(topleft, botright).Value = ltrange
+                self.LogAppend('End downloading tickets information')
+
+            self.LogAppend('End downloading to Lifecard')
 
         except Exception, e:
             self.LogAppend('Error during Download to LifeCard: %s' % str(e))
-
         if wkbook:
             try:
                 self.LogAppend('Saving and closing worksheet. Quitting Excel')
@@ -543,3 +503,66 @@ class Model(object):
                 xl.Quit()
             except Exception, e:
                 self.LogAppend('Error saving/closing/quitting Excel file: %s' % str(e))
+
+
+    #@PubSend('lifecarddownloadingattach')
+    def LifeCardDownloadAttach(self):
+        th = threading.Thread(target=self.LifeCardDownloadingAttach)
+        th.start()
+
+    @PubSend('lifecarddownloadedattach')
+    def LifeCardDownloadingAttach(self):
+        '''
+        How it works:
+          -- TBD
+        '''
+        try:
+            self.LogAppend('Downloading the attachments')
+            rpc = RpcInterface(self.serverurl, self.serverusername, self.serverpassword)
+
+            self.LogAppend('Compiling ticket list')
+            since = datetime.datetime(year=2014, month=1, day=1)
+            ticket_ids = rpc.getRecentChanges(since)
+            multicall = rpc.multicall()
+            for ticket_id in ticket_ids:
+                multicall.ticket.get(ticket_id)
+
+            self.LogAppend('Getting tickets')
+            tickets = map(Ticket, multicall())
+            tickets.sort(key=attrgetter('id'))
+
+            self.LogAppend('Getting List of Attachments per ticket')
+            for ticket in tickets:
+                ticket.attachments = rpc.listAttachments(ticket.id)
+
+            self.LogAppend('Processing attachments')
+            # Time to retrieve and save
+            for ticket in tickets:
+                if ticket.status == 'rejected':
+                    self.LogAppend('Skipping rejected ticket %d' % ticket.id)
+                    continue
+                self.LogAppend('Downloading Attachments for ticket %d' % ticket.id)
+                for attach in ticket.attachments:
+                    try:
+                        battach = rpc.getAttachment(ticket.id, attach[0])
+                    except Exception, e:
+                        self.LogAppend('Ticket %d Attachment Missing %s: %s' % (ticket.id, attach[0], str(e)))
+                    dirname = self.lifecardattachdir + '\\' + str(ticket.id).zfill(3)
+                    if not os.path.isdir(dirname):
+                        try:
+                            self.LogAppend('Creating dir %s' % dirname)
+                            os.makedirs(dirname)
+                        except os.error, e:
+                            raise Exception('Could not create dir %s: %s' % (dirname, str(e)))
+
+                    try:
+                        ofile = open(dirname + '\\' + attach[0], "wb")
+                        ofile.write(battach.data)
+                        ofile.close
+                    except Exception, e:
+                        raise Exception('Could not write file %s in dir %s: %s' % (attach[0], dirname, str(e)))
+
+            self.LogAppend('End downloading Attachments')
+
+        except Exception, e:
+            self.LogAppend('Error saving attachments: %s' % str(e))

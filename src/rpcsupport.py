@@ -91,5 +91,11 @@ class RpcInterface(object):
     def getRecentChanges(self, since):
         return self.server.ticket.getRecentChanges(xmlrpclib.DateTime(since))
 
+    def listAttachments(self, ticket_id):
+        return self.server.ticket.listAttachments(ticket_id)
+
+    def getAttachment(self, ticket_id, filename):
+        return self.server.ticket.getAttachment(ticket_id, filename)
+
     def multicall(self):
         return xmlrpclib.MultiCall(self.server)

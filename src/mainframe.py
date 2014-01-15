@@ -83,6 +83,7 @@ class MainFrame(maingui.MainFrame):
         ############################################################
         self.m_filePickerLifeCardExcel.SetPath(self._model.lifecardexcel)
         self.m_checkBoxLifeCardOverwriteTestCases = self._model.lcovertestcases
+        self.m_dirPickerDirAttachments.SetPath(self._model.lifecardattachdir)
 
 
     ############################################################
@@ -253,7 +254,6 @@ class MainFrame(maingui.MainFrame):
             # FIXME: the view must not touch the model - Generate event for controller
             self._model.lifecardtestplan = None
 
-
     #@PubSubscribe('lifecarddownloadingexcel')
     def LifeCardDownloadingExcel(self):
         self.dlgupexcel = DialogLongOp(self,
@@ -267,13 +267,13 @@ class MainFrame(maingui.MainFrame):
         self.dlgupexcel = None
 
     @PubSubscribe('lifecarddownloadedexcel')
-    def OnLifeCardDownloadedBugsExcel(self, msg):
+    def OnLifeCardDownloadedExcel(self, msg):
         if self.dlgupexcel:
             self.dlgupexcel.EndModal(wx.ID_OK)
 
 
-    #@PubSubscribe('lifecarddownloadingbugsexcel')
-    def LifeCardDownloadingBugsExcel(self):
+    #@PubSubscribe('lifecarddownloadingattach')
+    def LifeCardDownloadingAttach(self):
         self.dlgupexcel = DialogLongOp(self,
                                        message='Please do not touch anything until you see\n'
                                        'an error in the log or the indication the\n'
@@ -284,8 +284,7 @@ class MainFrame(maingui.MainFrame):
         retval = self.dlgupexcel.ShowModal()
         self.dlgupexcel = None
 
-    @PubSubscribe('lifecarddownloadedbugsexcel')
-    def OnLifeCardDownloadedBugsExcel(self, msg):
+    @PubSubscribe('lifecarddownloadedattach')
+    def OnLifeCardDownloadedAttach(self, msg):
         if self.dlgupexcel:
             self.dlgupexcel.EndModal(wx.ID_OK)
-
