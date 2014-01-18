@@ -80,6 +80,21 @@ class MainFrame ( wx.Frame ):
 		self.m_checkBoxServerPasswordShow = wx.CheckBox( self.m_panel8, wx.ID_ANY, u"Show Password", wx.DefaultPosition, wx.DefaultSize, 0 )
 		sbSizer13.Add( self.m_checkBoxServerPasswordShow, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
+		self.m_staticline17 = wx.StaticLine( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		sbSizer13.Add( self.m_staticline17, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		bSizer47 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText29 = wx.StaticText( self.m_panel8, wx.ID_ANY, u"Vendor Username in System (to Filter Comments/Actions in LifeCard)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText29.Wrap( -1 )
+		bSizer47.Add( self.m_staticText29, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_textCtrlLifeCardAuthorUp = wx.TextCtrl( self.m_panel8, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer47.Add( self.m_textCtrlLifeCardAuthorUp, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		sbSizer13.Add( bSizer47, 0, 0, 5 )
+		
 		self.m_staticline7 = wx.StaticLine( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		sbSizer13.Add( self.m_staticline7, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 5 )
 		
@@ -138,7 +153,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel8.SetSizer( bSizer12 )
 		self.m_panel8.Layout()
 		bSizer12.Fit( self.m_panel8 )
-		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", False )
+		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", True )
 		self.m_panel9 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer2 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -430,7 +445,48 @@ class MainFrame ( wx.Frame ):
 		self.m_panel7.SetSizer( bSizer24 )
 		self.m_panel7.Layout()
 		bSizer24.Fit( self.m_panel7 )
-		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", True )
+		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", False )
+		self.m_panel71 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		bSizer241 = wx.BoxSizer( wx.VERTICAL )
+		
+		sbSizer3211 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel71, wx.ID_ANY, wx.EmptyString ), wx.VERTICAL )
+		
+		fgSizer2111 = wx.FlexGridSizer( 0, 2, 0, 0 )
+		fgSizer2111.AddGrowableCol( 1 )
+		fgSizer2111.SetFlexibleDirection( wx.BOTH )
+		fgSizer2111.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		
+		self.m_staticText9111 = wx.StaticText( self.m_panel71, wx.ID_ANY, u"LifeCard", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText9111.Wrap( -1 )
+		fgSizer2111.Add( self.m_staticText9111, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_filePickerLifeCardExcelUp = wx.FilePickerCtrl( self.m_panel71, wx.ID_ANY, wx.EmptyString, u"Select a file", u"Excel Files (*.xlsx;*.xls)|*.xlsx;*.xls|All Files (*.*)|*.*", wx.DefaultPosition, wx.DefaultSize, wx.FLP_CHANGE_DIR|wx.FLP_OVERWRITE_PROMPT|wx.FLP_SAVE|wx.FLP_USE_TEXTCTRL )
+		fgSizer2111.Add( self.m_filePickerLifeCardExcelUp, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
+		
+		
+		sbSizer3211.Add( fgSizer2111, 1, wx.EXPAND, 5 )
+		
+		
+		bSizer241.Add( sbSizer3211, 0, wx.EXPAND, 5 )
+		
+		bSizer261 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_button201 = wx.Button( self.m_panel71, wx.ID_ANY, u"Upload", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer261.Add( self.m_button201, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		
+		bSizer241.Add( bSizer261, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		bSizer271 = wx.BoxSizer( wx.VERTICAL )
+		
+		
+		bSizer241.Add( bSizer271, 1, wx.EXPAND, 5 )
+		
+		
+		self.m_panel71.SetSizer( bSizer241 )
+		self.m_panel71.Layout()
+		bSizer241.Fit( self.m_panel71 )
+		self.m_notebook1.AddPage( self.m_panel71, u"LifeCard Upload", False )
 		
 		bSizer16.Add( self.m_notebook1, 1, wx.EXPAND, 5 )
 		
@@ -482,6 +538,8 @@ class MainFrame ( wx.Frame ):
 		self.m_textCtrlServerPassword.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerPassword )
 		self.m_textCtrlServerPasswordShown.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerPassword )
 		self.m_checkBoxServerPasswordShow.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxShowServerPassword )
+		self.m_staticText29.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusTicketUpdateAuthor )
+		self.m_textCtrlLifeCardAuthorUp.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocuslLifeCardAuthorUp )
 		self.m_button10.Bind( wx.EVT_BUTTON, self.OnButtonClickApplyServerSettings )
 		self.m_button16.Bind( wx.EVT_BUTTON, self.OnButtonClickUploadReloadCatalogs )
 		self.m_button14.Bind( wx.EVT_BUTTON, self.OnButtonClickCatalogsDelete )
@@ -508,6 +566,8 @@ class MainFrame ( wx.Frame ):
 		self.m_dirPickerDirAttachments.Bind( wx.EVT_DIRPICKER_CHANGED, self.OnDirChangedDirAttachments )
 		self.m_button20.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardDownload )
 		self.m_button17.Bind( wx.EVT_BUTTON, self.OnButtonClickDownloadAttachments )
+		self.m_filePickerLifeCardExcelUp.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChangedLifeCardExcelUp )
+		self.m_button201.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardUpload )
 		self.m_button7.Bind( wx.EVT_BUTTON, self.OnButtonClearLog )
 		self.m_button6.Bind( wx.EVT_BUTTON, self.OnButtonClickExit )
 		self.m_button5.Bind( wx.EVT_BUTTON, self.OnButtonClickClearRegistry )
@@ -528,6 +588,12 @@ class MainFrame ( wx.Frame ):
 	
 	
 	def OnCheckBoxShowServerPassword( self, event ):
+		event.Skip()
+	
+	def OnKillFocusTicketUpdateAuthor( self, event ):
+		event.Skip()
+	
+	def OnKillFocuslLifeCardAuthorUp( self, event ):
 		event.Skip()
 	
 	def OnButtonClickApplyServerSettings( self, event ):
@@ -600,6 +666,12 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 	
 	def OnButtonClickDownloadAttachments( self, event ):
+		event.Skip()
+	
+	def OnFileChangedLifeCardExcelUp( self, event ):
+		event.Skip()
+	
+	def OnButtonClickLifeCardUpload( self, event ):
 		event.Skip()
 	
 	def OnButtonClearLog( self, event ):

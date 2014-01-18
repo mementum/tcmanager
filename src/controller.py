@@ -220,3 +220,19 @@ class Controller(object):
     def OnButtonClickDownloadAttachments(self, event):
         self._model.LifeCardDownloadAttach()
         self._view.LifeCardDownloadingAttach()
+
+    ############################################################
+    # LifeCard Upload
+    ############################################################
+    @ViewManager
+    def OnFileChangedLifeCardExcelUp(self, event):
+        self._model.lifecardexcelup = self._view.m_filePickerLifeCardExcelUp.GetPath()
+
+    @ViewManager
+    def OnKillFocuslLifeCardAuthorUp(self, event):
+        self._model.lifecardauthorup = self._view.m_textCtrlLifeCardAuthorUp.GetValue()
+
+    @ViewManager
+    def OnButtonClickLifeCardUpload(self, event):
+        self._model.LifeCardUpload()
+        self._view.LifeCardUploading()

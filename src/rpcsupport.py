@@ -97,5 +97,16 @@ class RpcInterface(object):
     def getAttachment(self, ticket_id, filename):
         return self.server.ticket.getAttachment(ticket_id, filename)
 
+    def changeLog(self, ticket_id):
+        return self.server.ticket.changeLog(ticket_id)
+
+    def update(self, id, comment, attributes=None, notify=False, author='', when=None):
+        if not attributes:
+            attributes = dict()
+        if when:
+            when = xmlrpclib.DateTime(when)
+
+        return self.server.ticket.update(id, comment, attributes, notify, author)
+
     def multicall(self):
         return xmlrpclib.MultiCall(self.server)

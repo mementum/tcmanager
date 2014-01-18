@@ -85,6 +85,12 @@ class MainFrame(maingui.MainFrame):
         self.m_checkBoxLifeCardOverwriteTestCases = self._model.lcovertestcases
         self.m_dirPickerDirAttachments.SetPath(self._model.lifecardattachdir)
 
+        ############################################################
+        # LifeCard Upload CONFIG
+        ############################################################
+        self.m_filePickerLifeCardExcelUp.SetPath(self._model.lifecardexcelup)
+        self._view.m_textCtrlLifeCardAuthorUp.SetValue(self._model.lifecardauthorup)
+
 
     ############################################################
     # SERVER OPS
@@ -286,5 +292,26 @@ class MainFrame(maingui.MainFrame):
 
     @PubSubscribe('lifecarddownloadedattach')
     def OnLifeCardDownloadedAttach(self, msg):
+        if self.dlgupexcel:
+            self.dlgupexcel.EndModal(wx.ID_OK)
+
+    ############################################################
+    # LifeCard Download
+    ############################################################
+
+    #@PubSubscribe('lifecarduploading')
+    def LifeCardUploading(self):
+        self.dlgupexcel = DialogLongOp(self,
+                                       message='Please do not touch anything until you see\n'
+                                       'an error in the log or the indication the\n'
+                                       'the process is over',
+                                       caption='Downloading LifeCard to Excel',
+                                       style=wx.ICON_EXCLAMATION | wx.OK)
+
+        retval = self.dlgupexcel.ShowModal()
+        self.dlgupexcel = None
+
+    @PubSubscribe('lifecarduploaded')
+    def OnLifeCardUploaded(self, msg):
         if self.dlgupexcel:
             self.dlgupexcel.EndModal(wx.ID_OK)

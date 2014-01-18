@@ -36,7 +36,7 @@ from config import ConfigPrefix, ConfigString, ConfigBool
 # from excelsupport import ExcelFile
 from mvcbase import ModelRole, PubSend
 from rpcsupport import RpcInterface
-from tcmodel import TestCatalog, TestCase, TestCaseInPlan, Ticket
+from tcmodel import TestCatalog, TestCase, TestCaseInPlan, Ticket, TicketChangeLog
 
 @ModelRole
 class Model(object):
@@ -57,6 +57,9 @@ class Model(object):
     lifecardexcel = ConfigString(name='lifecardexcel', defvalue='')
     lifecardattachdir = ConfigString(name='lifecardattachdir', defvalue='')
     lcovertestcases = ConfigBool(name='lcovertestcases', defvalue=False)
+
+    lifecardexcelup = ConfigString(name='lifecardexcelup', defvalue='')
+    lifecardauthorup = ConfigString(name='lifecardauthorup', defvalue='')
 
     def __init__(self):
         self.serverpasswordshow = False
@@ -442,6 +445,19 @@ class Model(object):
             tickets = map(Ticket, multicall())
             tickets.sort(key=attrgetter('id'))
 
+            self.LogAppend('Getting tickets changelog')
+            multicall = rpc.multicall()
+            for ticket_id in ticket_ids:
+                multicall.ticket.changeLog(ticket_id)
+            # crete the ticketchangelog objects from call result
+            tlogs = multicall()
+            tlogs = dict(zip(ticket_ids, tlogs))
+            for ticket_id, clogs in tlogs.iteritems():
+                tloglist = list()
+                for clog in clogs:
+                    tloglist.append(TicketChangeLog(clog))
+                tlogs[ticket_id] = tloglist
+
             self.LogAppend('Generating Excel Data Range for tickets')
             ltrange = list()
             for ticket in tickets:
@@ -451,45 +467,84 @@ class Model(object):
                 lticket.extend([ticket.id, ticket.version, ticket.reporter])
                 # lticket.append('%s\n%s' % (ticket.summary, ticket.description))
                 lticket.append('%s\n---------------------\n%s' % (ticket.summary, ticket.description))
-                if ticket.testcaseid in tcases:
+                if ticket.testcaseid in tcasesb:
                     lticket.append(tcasesb[ticket.testcaseid].title)
                 else:
                     lticket.append('Exploratory Testing')
                 lticket.append(ticket.status.capitalize())
                 lticket.extend([ticket.priority, '', ticket.created])
 
+                tlog = tlogs[ticket.id]
+                owncomment = ''
+                vencomment = ''
+                for comment in filter(lambda x: x.name == 'comment', tlog):
+                    # format timestamp author and comment
+                    if not comment.new:
+                        continue
+                    if comment.author == self.lifecardauthorup:
+                        vencomment += '[%s] %s\n' % (comment.tstamp.strftime('%Y-%m-%dT%H%M'), comment.author)
+                        vencomment += comment.new
+                        vencomment += '\n'
+                    else:
+                        owncomment += '[%s]\n' % comment.tstamp.strftime('%Y-%m-%dT%H%M')
+                        owncomment += comment.new
+                        owncomment += '\n'
+
+                lticket.append(owncomment)
+                lticket.extend(['', '', ]) # skip 2 columnts
+                lticket.append(vencomment)
+
+                resoltxt = ''
+                for resolution in filter(lambda x: x.name == 'resolution', tlog):
+                    if not resolution.new:
+                        continue
+                    resoltxt += '[%s] %s\n' % (resolution.tstamp.strftime('%Y-%m-%dT%H%M'), comment.author)
+                    resoltxt += resolution.new
+                    resoltxt += '\n'
+
+                lticket.append(resoltxt)
+
                 ltrange.append(lticket)
             # raise Exception('Ticket List Compiled')
 
-
-            self.LogAppend('Opening Workbook %s' % self.lifecardexcel)
-            pythoncom.CoInitialize()
-            # xl = Dispatch('Excel.Application')
-            # xl = win32com.client.gencache.EnsureDispatchEx("Excel.Application")
-            xl = DispatchEx('Excel.Application') # Opens different instance
-            xl.Visible = 1
-            xl.Interactive = False
-            wkbook = xl.Workbooks.Open(self.lifecardexcel)
-
-            if not lrange:
-                self.LogAppend('No test cases to write down to Excel')
+            if not lrange and not ltrange:
+                self.LogAppend('Nothing to download to excel')
             else:
-                wksheet = wkbook.Sheets('Test Cases')
-                topleft = wksheet.Cells(tc_row_offset, tc_col_offset)
-                botright = wksheet.Cells(tc_row_offset + len(lrange) - 1, tc_col_offset + len(lrange[0]) - 1)
-                self.LogAppend('Writing Data to Worksheet')
-                wksheet.Range(topleft, botright).Value = lrange
-                self.LogAppend('End downloading test-case-in-plan information')
 
-            if not ltrange:
-                self.LogAppend('No tickets to write down to Excel')
-            else:
-                wksheet = wkbook.Sheets('Bug Tracking')
-                topleft = wksheet.Cells(ticket_row_offset, ticket_col_offset)
-                botright = wksheet.Cells(ticket_row_offset + len(ltrange) - 1, ticket_col_offset + len(ltrange[0]) - 1)
-                self.LogAppend('Writing Data to Worksheet')
-                wksheet.Range(topleft, botright).Value = ltrange
-                self.LogAppend('End downloading tickets information')
+                self.LogAppend('Opening Workbook %s' % self.lifecardexcel)
+                pythoncom.CoInitialize()
+                # xl = Dispatch('Excel.Application')
+                # xl = win32com.client.gencache.EnsureDispatchEx("Excel.Application")
+                xl = DispatchEx('Excel.Application') # Opens different instance
+                xl.Visible = 1
+                xl.Interactive = False
+                wkbook = xl.Workbooks.Open(self.lifecardexcel)
+
+                if not lrange:
+                    self.LogAppend('No test cases to write down to Excel')
+                else:
+                    lempty = [[''] * len(lrange[0])] * len(lrange)
+
+                    wksheet = wkbook.Sheets('Test Cases')
+                    topleft = wksheet.Cells(tc_row_offset, tc_col_offset)
+                    botright = wksheet.Cells(tc_row_offset + len(lrange) - 1, tc_col_offset + len(lrange[0]) - 1)
+                    self.LogAppend('Writing Data to Worksheet')
+                    wksheet.Range(topleft, botright).Value = lempty
+                    wksheet.Range(topleft, botright).Value = lrange
+                    self.LogAppend('End downloading test-case-in-plan information')
+
+                if not ltrange:
+                    self.LogAppend('No tickets to write down to Excel')
+                else:
+                    lempty = [[''] * len(ltrange[0])] * len(ltrange)
+
+                    wksheet = wkbook.Sheets('Bug Tracking')
+                    topleft = wksheet.Cells(ticket_row_offset, ticket_col_offset)
+                    botright = wksheet.Cells(ticket_row_offset + len(ltrange) - 1, ticket_col_offset + len(ltrange[0]) - 1)
+                    self.LogAppend('Writing Data to Worksheet')
+                    wksheet.Range(topleft, botright).Value = lempty
+                    wksheet.Range(topleft, botright).Value = ltrange
+                    self.LogAppend('End downloading tickets information')
 
             self.LogAppend('End downloading to Lifecard')
 
@@ -538,8 +593,8 @@ class Model(object):
             self.LogAppend('Processing attachments')
             # Time to retrieve and save
             for ticket in tickets:
-                if ticket.status == 'rejected':
-                    self.LogAppend('Skipping rejected ticket %d' % ticket.id)
+                if ticket.status in ['rejected', 'new']:
+                    self.LogAppend('Skipping %s rejected ticket %d' % (ticket.status, ticket.id))
                     continue
                 self.LogAppend('Downloading Attachments for ticket %d' % ticket.id)
                 for attach in ticket.attachments:
@@ -566,3 +621,80 @@ class Model(object):
 
         except Exception, e:
             self.LogAppend('Error saving attachments: %s' % str(e))
+
+
+    #@PubSend('lifecarduploading')
+    def LifeCardUpload(self):
+        th = threading.Thread(target=self.LifeCardUploading)
+        th.start()
+
+    @PubSend('lifecarduploaded')
+    def LifeCardUploading(self):
+        '''
+        How it works:
+          -- TBD
+        '''
+
+        try:
+            self.LogAppend('Using Excel file %s' % self.lifecardexcelup)
+            workbook = xlrd.open_workbook(self.lifecardexcelup)
+            self.LogAppend('Choosing sheet "Bug Tracking"')
+            wksheet = workbook.sheet_by_name('Bug Tracking')
+
+            self.LogAppend('Compiling updates from Excel Table')
+            updates = OrderedDict()
+            row = 1
+            while True:
+                try:
+                    ticket_id = int(wksheet.cell_value(row, 3))
+                except IndexError, e:
+                    if row >= wksheet.nrows:
+                        # expected limit reached
+                        break
+                    raise e
+                except Exception, e:
+                    raise e
+
+                resolution = wksheet.cell_value(row, 0)
+                comment = wksheet.cell_value(row, 1)
+                if resolution or comment:
+                    updates[ticket_id] = (resolution, comment)
+                row += 1
+
+            if not updates:
+                self.LogAppend('No updated found on Lifecard')
+                return
+
+            self.LogAppend('%d updates found' % len(updates))
+
+            self.LogAppend('Opening interface to the server')
+            rpc = RpcInterface(self.serverurl, self.serverusername, self.serverpassword)
+
+            self.LogAppend('Compiling ticket list from server')
+            multicall = rpc.multicall()
+            for ticket_id in updates.iterkeys():
+                multicall.ticket.get(ticket_id)
+            tickets = map(Ticket, multicall()) # list
+            tickets = dict(map(lambda x: (x.id, x), tickets)) # dict indexed by ticket_id
+
+            self.LogAppend('Updating tickets')
+            for ticket_id, value in updates.iteritems():
+                resolution, comment = value
+                ticket = tickets[ticket_id]
+                if ticket.status != 'open':
+                    self.LogAppend('Skipping Ticket %d with update but not open (%s)' % (ticket.id, ticket.status))
+                    continue
+                self.LogAppend('Updating Ticket %d' % ticket_id)
+                attributes = dict()
+                if resolution:
+                    attributes['resolution'] = resolution
+
+                # Old Update --- Check ticket.py code and look for an example of 'action'
+                rpc.update(ticket_id, comment, attributes, author=self.lifecardauthorup)
+
+            self.LogAppend('Finished updating Lifecard')
+
+
+        except Exception, e:
+            self.LogAppend('Error during LifeCard upload: %s' % str(e))
+
