@@ -153,7 +153,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel8.SetSizer( bSizer12 )
 		self.m_panel8.Layout()
 		bSizer12.Fit( self.m_panel8 )
-		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", True )
+		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", False )
 		self.m_panel9 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer2 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -404,10 +404,19 @@ class MainFrame ( wx.Frame ):
 		
 		fgSizer211.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
 		
-		self.m_checkBoxLifeCardOverwriteTestCases = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Overwrite Test Cases in Excel", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_checkBoxLifeCardOverwriteTestCases.Enable( False )
+		bSizer31 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		fgSizer211.Add( self.m_checkBoxLifeCardOverwriteTestCases, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		self.m_checkBoxDownloadExcelNotSave = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Do not save the Excel Sheet", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer31.Add( self.m_checkBoxDownloadExcelNotSave, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline24 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer31.Add( self.m_staticline24, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxDownloadKeepExcelOpen = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Keep Excel Open", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer31.Add( self.m_checkBoxDownloadKeepExcelOpen, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		fgSizer211.Add( bSizer31, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
 		self.m_staticText16 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Attachement Dir", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText16.Wrap( -1 )
@@ -425,6 +434,50 @@ class MainFrame ( wx.Frame ):
 		self.m_staticline142 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		bSizer24.Add( self.m_staticline142, 0, wx.EXPAND |wx.ALL, 5 )
 		
+		sbSizer8 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel7, wx.ID_ANY, u"Bug Status to Download" ), wx.HORIZONTAL )
+		
+		self.m_checkBoxDownloadOpen = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Open", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer8.Add( self.m_checkBoxDownloadOpen, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline122 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		sbSizer8.Add( self.m_staticline122, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxDownloadClosed = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Closed", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer8.Add( self.m_checkBoxDownloadClosed, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline123 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		sbSizer8.Add( self.m_staticline123, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxDownloadInvestigation = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Investigation", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer8.Add( self.m_checkBoxDownloadInvestigation, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline1231 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		sbSizer8.Add( self.m_staticline1231, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxDownloadFixed = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Fixed", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer8.Add( self.m_checkBoxDownloadFixed, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		sbSizer8.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.m_staticline12 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		sbSizer8.Add( self.m_staticline12, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxDownloadRejected = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Rejected", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer8.Add( self.m_checkBoxDownloadRejected, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		sbSizer8.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.m_staticline121 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		sbSizer8.Add( self.m_staticline121, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxDownloadNew = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"New", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer8.Add( self.m_checkBoxDownloadNew, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		bSizer24.Add( sbSizer8, 0, wx.EXPAND, 5 )
+		
 		bSizer26 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_button20 = wx.Button( self.m_panel7, wx.ID_ANY, u"Download TestCases to LifeCard", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -436,16 +489,11 @@ class MainFrame ( wx.Frame ):
 		
 		bSizer24.Add( bSizer26, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
-		bSizer27 = wx.BoxSizer( wx.VERTICAL )
-		
-		
-		bSizer24.Add( bSizer27, 1, wx.EXPAND, 5 )
-		
 		
 		self.m_panel7.SetSizer( bSizer24 )
 		self.m_panel7.Layout()
 		bSizer24.Fit( self.m_panel7 )
-		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", False )
+		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", True )
 		self.m_panel71 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer241 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -460,7 +508,7 @@ class MainFrame ( wx.Frame ):
 		self.m_staticText9111.Wrap( -1 )
 		fgSizer2111.Add( self.m_staticText9111, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
-		self.m_filePickerLifeCardExcelUp = wx.FilePickerCtrl( self.m_panel71, wx.ID_ANY, wx.EmptyString, u"Select a file", u"Excel Files (*.xlsx;*.xls)|*.xlsx;*.xls|All Files (*.*)|*.*", wx.DefaultPosition, wx.DefaultSize, wx.FLP_CHANGE_DIR|wx.FLP_OVERWRITE_PROMPT|wx.FLP_SAVE|wx.FLP_USE_TEXTCTRL )
+		self.m_filePickerLifeCardExcelUp = wx.FilePickerCtrl( self.m_panel71, wx.ID_ANY, wx.EmptyString, u"Select a file", u"Excel Files (*.xlsx;*.xls)|*.xlsx;*.xls|All Files (*.*)|*.*", wx.DefaultPosition, wx.DefaultSize, wx.FLP_CHANGE_DIR|wx.FLP_FILE_MUST_EXIST|wx.FLP_OPEN|wx.FLP_USE_TEXTCTRL )
 		fgSizer2111.Add( self.m_filePickerLifeCardExcelUp, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
 		
 		
@@ -562,8 +610,15 @@ class MainFrame ( wx.Frame ):
 		self.m_button111.Bind( wx.EVT_BUTTON, self.OnButtonClickUploadReloadCatalogs )
 		self.m_button19.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardTestPlansReload )
 		self.m_filePickerLifeCardExcel.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChangedLifeCardExcel )
-		self.m_checkBoxLifeCardOverwriteTestCases.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLifeCardOverwriteTestCases )
+		self.m_checkBoxDownloadExcelNotSave.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadExcelNotSave )
+		self.m_checkBoxDownloadKeepExcelOpen.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadKeepExcelOpen )
 		self.m_dirPickerDirAttachments.Bind( wx.EVT_DIRPICKER_CHANGED, self.OnDirChangedDirAttachments )
+		self.m_checkBoxDownloadOpen.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadOpen )
+		self.m_checkBoxDownloadClosed.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadClosed )
+		self.m_checkBoxDownloadInvestigation.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadInvestigation )
+		self.m_checkBoxDownloadFixed.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadFixed )
+		self.m_checkBoxDownloadRejected.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadRejected )
+		self.m_checkBoxDownloadNew.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadNew )
 		self.m_button20.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardDownload )
 		self.m_button17.Bind( wx.EVT_BUTTON, self.OnButtonClickDownloadAttachments )
 		self.m_filePickerLifeCardExcelUp.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChangedLifeCardExcelUp )
@@ -656,10 +711,31 @@ class MainFrame ( wx.Frame ):
 	def OnFileChangedLifeCardExcel( self, event ):
 		event.Skip()
 	
-	def OnCheckBoxLifeCardOverwriteTestCases( self, event ):
+	def OnCheckBoxDownloadExcelNotSave( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxDownloadKeepExcelOpen( self, event ):
 		event.Skip()
 	
 	def OnDirChangedDirAttachments( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxDownloadOpen( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxDownloadClosed( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxDownloadInvestigation( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxDownloadFixed( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxDownloadRejected( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxDownloadNew( self, event ):
 		event.Skip()
 	
 	def OnButtonClickLifeCardDownload( self, event ):

@@ -47,35 +47,6 @@ class TcGeneric(object):
                 raise TypeError('unknown type for TcGeneric %s in %s' % (str(field), str(data)))
 
 
-class TicketChangeLog(TcGeneric):
-    attrmap = [ 'tstamp', 'author', 'name', 'old', 'new', 'permanent',]
-
-    def __init__(self, data):
-        TcGeneric.__init__(self, data)
-        try:
-            specialize = getattr(self, '%size' % self.name)
-        except AttributeError:
-            pass
-        else:
-            specialize()
-
-    def commentize(self):
-        self.id = self.old
-        self.comment = self.new
-
-    def ownerize(self):
-        pass
-
-    def resolutionize(self):
-        self.resolution = self.new
-
-    def statusize(self):
-        self.status = self.new
-
-    def attachmentize(self):
-        self.attachment = self.new
-
-
 class TestCatalog(TcGeneric):
     headers = [ 'Category', 'SubCategory', 'Test Case ID', 'Test Purpose', 'Design ID',
                 'Prerequisites', 'Test Execution', 'Expected Results', 'Comments',]
@@ -136,3 +107,31 @@ class TestCaseInPlan(TcGeneric):
 
 class Ticket(TcGeneric):
     attrmap = ['id', 'created', 'changed', 'values',]
+
+class TicketChangeLog(TcGeneric):
+    attrmap = [ 'tstamp', 'author', 'name', 'old', 'new', 'permanent',]
+
+    def __init__(self, data):
+        TcGeneric.__init__(self, data)
+        try:
+            specialize = getattr(self, '%size' % self.name)
+        except AttributeError:
+            pass
+        else:
+            specialize()
+
+    def commentize(self):
+        self.id = self.old
+        self.comment = self.new
+
+    def ownerize(self):
+        pass
+
+    def resolutionize(self):
+        self.resolution = self.new
+
+    def statusize(self):
+        self.status = self.new
+
+    def attachmentize(self):
+        self.attachment = self.new

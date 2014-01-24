@@ -82,8 +82,15 @@ class MainFrame(maingui.MainFrame):
         # LifeCard Download CONFIG
         ############################################################
         self.m_filePickerLifeCardExcel.SetPath(self._model.lifecardexcel)
-        self.m_checkBoxLifeCardOverwriteTestCases = self._model.lcovertestcases
+        self.m_checkBoxDownloadKeepExcelOpen.SetValue(self._model.lcdownkeepexcelopen)
+        self.m_checkBoxDownloadExcelNotSave.SetValue(self._model.lcdownexcelnotsave)
         self.m_dirPickerDirAttachments.SetPath(self._model.lifecardattachdir)
+        self.m_checkBoxDownloadOpen.SetValue(self._model.lcdownopen)
+        self.m_checkBoxDownloadClosed.SetValue(self._model.lcdownclosed)
+        self.m_checkBoxDownloadFixed.SetValue(self._model.lcdownfixed)
+        self.m_checkBoxDownloadInvestigation.SetValue(self._model.lcdowninvest)
+        self.m_checkBoxDownloadRejected.SetValue(self._model.lcdownreject)
+        self.m_checkBoxDownloadNew.SetValue(self._model.lcdownnew)
 
         ############################################################
         # LifeCard Upload CONFIG

@@ -56,7 +56,14 @@ class Model(object):
 
     lifecardexcel = ConfigString(name='lifecardexcel', defvalue='')
     lifecardattachdir = ConfigString(name='lifecardattachdir', defvalue='')
-    lcovertestcases = ConfigBool(name='lcovertestcases', defvalue=False)
+    lcdownexcelnotsave = ConfigBool(name='lcdownexcelnotsave', defvalue=False)
+    lcdownkeepexcelopen = ConfigBool(name='lcdownkeepexcelopen', defvalue=False)
+    lcdownopen = ConfigBool(name='lcdownopen', defvalue=True)
+    lcdownclosed = ConfigBool(name='lcdownclosed', defvalue=True)
+    lcdownfixed = ConfigBool(name='lcdownfixed', defvalue=True)
+    lcdowninvest = ConfigBool(name='lcdowninvest', defvalue=True)
+    lcdownreject = ConfigBool(name='lcdownreject', defvalue=True)
+    lcdownnew  = ConfigBool(name='lcdownnew', defvalue=False)
 
     lifecardexcelup = ConfigString(name='lifecardexcelup', defvalue='')
     lifecardauthorup = ConfigString(name='lifecardauthorup', defvalue='')
@@ -427,13 +434,6 @@ class Model(object):
                                tcip.author, tcip.timestamp.split('T')[0]])
                 lrange.append(ltcase)
 
-            if False:
-                print "len lrange is", len(lrange)
-                print "len elements is", len(lrange[0])
-                print "elements 0", lrange[0]
-                #raise Exception('Finished compiling test cases and catalogs')
-
-
             self.LogAppend('Compiling ticket list')
             since = datetime.datetime(year=2014, month=1, day=1)
             ticket_ids = rpc.getRecentChanges(since)
@@ -458,10 +458,19 @@ class Model(object):
                     tloglist.append(TicketChangeLog(clog))
                 tlogs[ticket_id] = tloglist
 
+            tstatusdown = list()
+            tstatusdown.append('new') if self.lcdownnew else None
+            tstatusdown.append('open') if self.lcdownopen else None
+            tstatusdown.append('closed') if self.lcdownclosed else None
+            tstatusdown.append('fixed') if self.lcdownfixed else None
+            tstatusdown.append('rejected') if self.lcdownreject else None
+            tstatusdown.append('investigation') if self.lcdowninvest else None
+            self.LogAppend('Will download following ticket types: %s' % str(tstatusdown))
+
             self.LogAppend('Generating Excel Data Range for tickets')
             ltrange = list()
             for ticket in tickets:
-                if ticket.status in ['new',]:
+                if ticket.status not in tstatusdown:
                     continue
                 lticket = list()
                 lticket.extend([ticket.id, ticket.version, ticket.reporter])
@@ -472,7 +481,9 @@ class Model(object):
                 else:
                     lticket.append('Exploratory Testing')
                 lticket.append(ticket.status.capitalize())
-                lticket.extend([ticket.priority, '', ticket.created])
+                lticket.append(ticket.priority)
+                # lticket.append('') # skip 'Test Comment Column'
+                lticket.append(ticket.created)
 
                 tlog = tlogs[ticket.id]
                 owncomment = ''
@@ -482,23 +493,23 @@ class Model(object):
                     if not comment.new:
                         continue
                     if comment.author == self.lifecardauthorup:
-                        vencomment += '[%s] %s\n' % (comment.tstamp.strftime('%Y-%m-%dT%H%M'), comment.author)
+                        vencomment += '[%s]\n' % (comment.tstamp.strftime('%Y-%m-%dT%H:%M'),)
                         vencomment += comment.new
                         vencomment += '\n'
                     else:
-                        owncomment += '[%s]\n' % comment.tstamp.strftime('%Y-%m-%dT%H%M')
+                        owncomment += '[%s] %s\n' % (comment.tstamp.strftime('%Y-%m-%dT%H:%M'), comment.author)
                         owncomment += comment.new
                         owncomment += '\n'
 
                 lticket.append(owncomment)
-                lticket.extend(['', '', ]) # skip 2 columnts
+                # lticket.extend(['', '', ]) # skip 2 columnts
                 lticket.append(vencomment)
 
                 resoltxt = ''
                 for resolution in filter(lambda x: x.name == 'resolution', tlog):
                     if not resolution.new:
                         continue
-                    resoltxt += '[%s] %s\n' % (resolution.tstamp.strftime('%Y-%m-%dT%H%M'), comment.author)
+                    resoltxt += '[%s]\n' % (resolution.tstamp.strftime('%Y-%m-%dT%H:%M'),)
                     resoltxt += resolution.new
                     resoltxt += '\n'
 
@@ -517,7 +528,7 @@ class Model(object):
                 # xl = win32com.client.gencache.EnsureDispatchEx("Excel.Application")
                 xl = DispatchEx('Excel.Application') # Opens different instance
                 xl.Visible = 1
-                xl.Interactive = False
+                xl.Interactive = True if self.lcdownkeepexcelopen else False
                 wkbook = xl.Workbooks.Open(self.lifecardexcel)
 
                 if not lrange:
@@ -526,6 +537,8 @@ class Model(object):
                     lempty = [[''] * len(lrange[0])] * len(lrange)
 
                     wksheet = wkbook.Sheets('Test Cases')
+                    if False and wksheet.AutoFilterMode:
+                        wksheet.ShowAllData()
                     topleft = wksheet.Cells(tc_row_offset, tc_col_offset)
                     botright = wksheet.Cells(tc_row_offset + len(lrange) - 1, tc_col_offset + len(lrange[0]) - 1)
                     self.LogAppend('Writing Data to Worksheet')
@@ -536,13 +549,23 @@ class Model(object):
                 if not ltrange:
                     self.LogAppend('No tickets to write down to Excel')
                 else:
-                    lempty = [[''] * len(ltrange[0])] * len(ltrange)
+                    self.LogAppend('Writing Data to Worksheet')
+                    # FIXME: if there are no tickets ... I would also need to clear the list
+                    # The property .UsedRange should give access to cells that have already
+                    # been used (I can delete the range)
+                    lempty = [['',] * len(ltrange[0])] * len(tickets)
 
                     wksheet = wkbook.Sheets('Bug Tracking')
+                    if False and wksheet.AutoFilterMode:
+                        wksheet.ShowAllData()
                     topleft = wksheet.Cells(ticket_row_offset, ticket_col_offset)
-                    botright = wksheet.Cells(ticket_row_offset + len(ltrange) - 1, ticket_col_offset + len(ltrange[0]) - 1)
-                    self.LogAppend('Writing Data to Worksheet')
-                    wksheet.Range(topleft, botright).Value = lempty
+                    botright = wksheet.Cells(ticket_row_offset + len(ltrange) - 1,
+                                             ticket_col_offset + len(ltrange[0]) - 1)
+
+                    botrightempty = wksheet.Cells(ticket_row_offset + len(tickets) - 1,
+                                                  ticket_col_offset + len(ltrange[0]) - 1)
+
+                    wksheet.Range(topleft, botrightempty).Value = lempty
                     wksheet.Range(topleft, botright).Value = ltrange
                     self.LogAppend('End downloading tickets information')
 
@@ -553,9 +576,11 @@ class Model(object):
         if wkbook:
             try:
                 self.LogAppend('Saving and closing worksheet. Quitting Excel')
-                wkbook.Save()
-                wkbook.Close(False)
-                xl.Quit()
+                if not self.lcdownexcelnotsave:
+                    wkbook.Save()
+                if not self.lcdownkeepexcelopen:
+                    wkbook.Close(False)
+                    xl.Quit()
             except Exception, e:
                 self.LogAppend('Error saving/closing/quitting Excel file: %s' % str(e))
 
@@ -594,7 +619,7 @@ class Model(object):
             # Time to retrieve and save
             for ticket in tickets:
                 if ticket.status in ['rejected', 'new']:
-                    self.LogAppend('Skipping %s rejected ticket %d' % (ticket.status, ticket.id))
+                    self.LogAppend('Skipping %s ticket %d' % (ticket.status, ticket.id))
                     continue
                 self.LogAppend('Downloading Attachments for ticket %d' % ticket.id)
                 for attach in ticket.attachments:
@@ -681,7 +706,7 @@ class Model(object):
             for ticket_id, value in updates.iteritems():
                 resolution, comment = value
                 ticket = tickets[ticket_id]
-                if ticket.status != 'open':
+                if False and ticket.status != 'open':
                     self.LogAppend('Skipping Ticket %d with update but not open (%s)' % (ticket.id, ticket.status))
                     continue
                 self.LogAppend('Updating Ticket %d' % ticket_id)
@@ -697,4 +722,3 @@ class Model(object):
 
         except Exception, e:
             self.LogAppend('Error during LifeCard upload: %s' % str(e))
-

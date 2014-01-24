@@ -179,6 +179,31 @@ class Controller(object):
     # LifeCard Download
     ############################################################
     @ViewManager
+    def OnCheckBoxDownloadOpen(self, event):
+        self._model.lcdownopen = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxDownloadFixed(self, event):
+        self._model.lcdownfixed = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxDownloadClosed(self, event):
+        self._model.lcdownclosed = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxDownloadInvestigation(self, event):
+        self._model.lcdowninvest = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxDownloadRejected(self, event):
+        self._model.lcdownreject = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxDownloadNew(self, event):
+        self._model.lcdownnew = event.IsChecked()
+
+
+    @ViewManager
     def OnChoiceLifeCardCatalogs(self, event):
         item = self._view.m_choiceLifeCardCatalogs.GetSelection()
         catalog = self._view.m_choiceDownloadCatalogs.GetClientData(item)
@@ -209,8 +234,12 @@ class Controller(object):
         self._view.LifeCardDownloadingExcel()
 
     @ViewManager
-    def OnCheckBoxLifeCardOverwriteTestCases(self, event):
-        self._model.lcovertestcases = event.IsChecked()
+    def OnCheckBoxDownloadKeepExcelOpen(self, event):
+        self._model.lcdownkeepexcelopen = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxDownloadExcelNotSave(self, event):
+        self._model.lcdownexcelnotsave = event.IsChecked()
 
     @ViewManager
     def OnDirChangedDirAttachments(self, event):
