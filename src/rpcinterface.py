@@ -2,7 +2,7 @@
 # -*- coding: latin-1; py-indent-offset:4 -*-
 ################################################################################
 # 
-#   Copyright (C) 2013 Daniel Rodriguez
+#   Copyright (C) 2014 Daniel Rodriguez
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
