@@ -17,22 +17,24 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ################################################################################
-# Sample file to be edited
-# TODO:
-# -- Add bit that finds in which directory the script is (regardless of how it was called)
-# -- Update the pyinstaller commands to the latest version
+# Spec file generated with
+# pyinstaller --specpath=./scripts --onefile --windowed --noupx src/tcmanager.pyw
+prevdir=`pwd`
 
+basedir="$( cd "$( dirname "$0" )" && pwd )"
+cd ${basedir}
+cd ..
+
+# Remove unneeded files (everything will be recompiled)
 find . -name '*~' -exec rm -f {} \;
+find . -name '*.bak' -exec rm -f {} \;
 find . -name '*.pyc' -exec rm -f {} \;
 find . -name '*.pyo' -exec rm -f {} \;
 
-rm -rf bin
+# Clean up previous builds
+rm -rf build dist
 
-mkdir -p bin/pkg
-cp scripts/make-exe.spec bin/pkg
+# Build the executable
+pyinstaller ./scripts/tcmanager.spec
 
-python -OO ../pyinstaller/Build.py -y bin/pkg/vcexportmanager.spec
-mv -f logdict* bin/pkg
-
-cp LICENSE README bin/pkg/dist/vcexportmanager
-
+cd ${prevdir}
