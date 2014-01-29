@@ -17,24 +17,21 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ################################################################################
-# Spec file generated with
-# pyinstaller --onefile --windowed --noupx --specpath=./scripts --additional-hooks-dir=./scripts/hooks src/tcmanager.pyw
+
 prevdir=`pwd`
 
 basedir="$( cd "$( dirname "$0" )" && pwd )"
 cd ${basedir}
 cd ..
 
-# Remove unneeded files (everything will be recompiled)
-find . -name '*~' -exec rm -f {} \;
-find . -name '*.bak' -exec rm -f {} \;
-find . -name '*.pyc' -exec rm -f {} \;
-find . -name '*.pyo' -exec rm -f {} \;
+odir="build/innosetup"
 
-# Clean up previous builds
-rm -rf build dist
+rm -rf ${odir}
+mkdir ${odir}
+cp LICENSE ${odir}
+cp README.md ${odir}
+cp -r dist/* ${odir}
 
-# Build the executable
-pyinstaller ./scripts/tcmanager.spec
+iscc scripts/innosetup.iss
 
 cd ${prevdir}
