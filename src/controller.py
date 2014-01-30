@@ -28,6 +28,19 @@ class Controller(object):
     def __init__(self):
         pass
 
+    @ViewManager
+    def OnButtonClickResetSize(self, event):
+        event.Skip()
+        self._view.Fit()
+
+    @ViewManager
+    def OnSizeMainFrame(self, event):
+        event.Skip()
+        if not self._view.skipsize:
+            wsize = event.GetSize()
+            self._model.winwidth = wsize.width
+            self._model.winheight = wsize.height
+
     @PubSubscribe('init')
     def OnViewInit(self, msg):
         self._model.init()

@@ -32,7 +32,7 @@ import win32com.client.gencache
 import xlrd
 import xlsxwriter
 
-from config import ConfigPrefix, ConfigString, ConfigBool
+from config import ConfigInt, ConfigPrefix, ConfigString, ConfigBool
 # from excelsupport import ExcelFile
 from mvcbase import ModelRole, PubSend
 from rpcsupport import RpcInterface
@@ -40,6 +40,9 @@ from tcmodel import TestCatalog, TestCase, TestCaseInPlan, Ticket, TicketChangeL
 
 @ModelRole
 class Model(object):
+    winwidth = ConfigInt(name='winwidth', defvalue=-1)
+    winheight = ConfigInt(name='winheight', defvalue=-1)
+
     serverurl = ConfigString(name='serverurl', defvalue='')
     serverusername = ConfigString(name='server', defvalue='')
     serverpassword = ConfigString(name='serverpassword', defvalue='')

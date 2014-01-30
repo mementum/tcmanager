@@ -17,7 +17,7 @@ import wx.xrc
 class MainFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Test Case Manager", pos = wx.DefaultPosition, size = wx.Size( -1,-1 ), style = wx.CAPTION|wx.CLOSE_BOX|wx.MINIMIZE_BOX|wx.SYSTEM_MENU|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Test Case Manager", pos = wx.DefaultPosition, size = wx.Size( -1,-1 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
@@ -153,7 +153,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel8.SetSizer( bSizer12 )
 		self.m_panel8.Layout()
 		bSizer12.Fit( self.m_panel8 )
-		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", False )
+		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", True )
 		self.m_panel9 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer2 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -493,7 +493,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel7.SetSizer( bSizer24 )
 		self.m_panel7.Layout()
 		bSizer24.Fit( self.m_panel7 )
-		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", True )
+		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", False )
 		self.m_panel71 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer241 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -561,6 +561,9 @@ class MainFrame ( wx.Frame ):
 		self.m_button5 = wx.Button( self.m_panel6, wx.ID_ANY, u"Clear Registry", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer9.Add( self.m_button5, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
+		self.m_button191 = wx.Button( self.m_panel6, wx.ID_ANY, u"Reset Window Size", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer9.Add( self.m_button191, 0, wx.ALL, 5 )
+		
 		
 		bSizer10.Add( bSizer9, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.TOP|wx.BOTTOM, 5 )
 		
@@ -581,6 +584,7 @@ class MainFrame ( wx.Frame ):
 		self.Centre( wx.BOTH )
 		
 		# Connect Events
+		self.Bind( wx.EVT_SIZE, self.OnSizeMainFrame )
 		self.m_textCtrlServerUrl.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerUrl )
 		self.m_textCtrlServerUsername.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerUsername )
 		self.m_textCtrlServerPassword.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerPassword )
@@ -626,12 +630,16 @@ class MainFrame ( wx.Frame ):
 		self.m_button7.Bind( wx.EVT_BUTTON, self.OnButtonClearLog )
 		self.m_button6.Bind( wx.EVT_BUTTON, self.OnButtonClickExit )
 		self.m_button5.Bind( wx.EVT_BUTTON, self.OnButtonClickClearRegistry )
+		self.m_button191.Bind( wx.EVT_BUTTON, self.OnButtonClickResetSize )
 	
 	def __del__( self ):
 		pass
 	
 	
 	# Virtual event handlers, overide them in your derived class
+	def OnSizeMainFrame( self, event ):
+		event.Skip()
+	
 	def OnKillFocusServerUrl( self, event ):
 		event.Skip()
 	
@@ -757,6 +765,9 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 	
 	def OnButtonClickClearRegistry( self, event ):
+		event.Skip()
+	
+	def OnButtonClickResetSize( self, event ):
 		event.Skip()
 	
 

@@ -37,6 +37,7 @@ import rpcsupport
 
 @ViewRole
 class MainFrame(maingui.MainFrame):
+    skipsize = True
 
     @PubSubscribe('logappend')
     def LogAppend(self, msg):
@@ -97,6 +98,15 @@ class MainFrame(maingui.MainFrame):
         ############################################################
         self.m_filePickerLifeCardExcelUp.SetPath(self._model.lifecardexcelup)
         self._view.m_textCtrlLifeCardAuthorUp.SetValue(self._model.lifecardauthorup)
+
+        width, height = self._model.winwidth, self._model.winheight
+        self.skipsize = False
+        if width != -1:
+            # self.skipsize needed to skip the initial onsize elements
+            # sent during initialization. That's why the variable
+            # is defined at class level, to set it to false
+            # before any window initialization takes place
+            self.SetSize(wx.Size(width, height))
 
 
     ############################################################
