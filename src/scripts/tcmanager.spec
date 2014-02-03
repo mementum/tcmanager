@@ -1,17 +1,22 @@
 # -*- mode: python -*-
-a = Analysis(['./scripts\\..\\src\\tcmanager.pyw'],
+a = Analysis(['src/tcmanager.pyw'],
              pathex=['./scripts'],
              hiddenimports=[],
-             hookspath=['./scripts\\hooks'],
+             hookspath=['./scripts/hooks'],
              runtime_hooks=None)
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
-          a.binaries,
-          a.zipfiles,
-          a.datas,
+          exclude_binaries=True,
           name='tcmanager.exe',
           debug=False,
           strip=None,
           upx=False,
           console=False )
+coll = COLLECT(exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=None,
+               upx=False,
+               name='tcmanager')

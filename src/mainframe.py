@@ -49,12 +49,13 @@ class MainFrame(maingui.MainFrame):
         wx.MessageBox(msg, 'Error')
 
     def DisplayWarning(self, msg):
-        return wx.MessageBox(message=msg, caption='Error',
-                               style= wx.ICON_HAND | wx.YES_NO)
+        return wx.MessageBox(message=msg, caption='Error', style= wx.ICON_HAND | wx.YES_NO)
 
     @PubSend('init')
     def __init__(self, parent):
         maingui.MainFrame.__init__(self, parent)
+        title = constants.AppTitle + ' - ' + constants.Appversion
+        self.SetTitle(title)
 
     @PubSubscribe('init')
     def OnModelInit(self, msg):
@@ -98,6 +99,19 @@ class MainFrame(maingui.MainFrame):
         ############################################################
         self.m_filePickerLifeCardExcelUp.SetPath(self._model.lifecardexcelup)
         self._view.m_textCtrlLifeCardAuthorUp.SetValue(self._model.lifecardauthorup)
+
+        self.m_textCtrlLifeCardUpSheetName.SetValue(self._model.lcardup_sheetname)
+        self.m_textCtrlLifeCardUpRowStart.SetValue(self._model.lcardup_row_start)
+        self.m_textCtrlLifeCardUpColTicketId.SetValue(self._model.lcardup_col_ticket)
+        self.m_textCtrlLifeCardUpColResolution.SetValue(self._model.lcardup_col_resol)
+        self.m_textCtrlLifeCardUpColComment.SetValue(self._model.lcardup_col_comment)
+
+        self.m_checkBoxLifeCardUpStatusOpen.SetValue(self._model.lcardup_status_open)
+        self.m_checkBoxLifeCardUpStatusClosed.SetValue(self._model.lcardup_status_closed)
+        self.m_checkBoxLifeCardUpStatusInvestigation.SetValue(self._model.lcardup_status_investigation)
+        self.m_checkBoxLifeCardUpStatusFixed.SetValue(self._model.lcardup_status_fixed)
+        self.m_checkBoxLifeCardUpStatusRejected.SetValue(self._model.lcardup_status_rejected)
+        self.m_checkBoxLifeCardUpStatusNew.SetValue(self._model.lcardup_status_new)
 
         width, height = self._model.winwidth, self._model.winheight
         self.skipsize = False

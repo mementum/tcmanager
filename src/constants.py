@@ -1,4 +1,5 @@
-#! /bin/sh
+#!/usr/bin/env python
+# -*- coding: utf-8; py-indent-offset:4 -*-
 ################################################################################
 # 
 #   Copyright (C) 2014 Daniel Rodriguez
@@ -18,20 +19,12 @@
 #
 ################################################################################
 
-prevdir=`pwd`
-
-basedir="$( cd "$( dirname "$0" )" && pwd )"
-cd ${basedir}
-cd ..
-
-odir="build/innosetup"
-
-rm -rf ${odir}
-mkdir ${odir}
-cp LICENSE ${odir}
-cp README.md ${odir}
-cp -r dist/* ${odir}
-
-iscc scripts/innosetup.iss
-
-cd ${prevdir}
+AppName='tcmanager'
+VendorName=AppName
+AppPublisher='Daniel Rodriguez'
+AppURL='https://github.com/mementum/tcmanager'
+AppExeName='tcmanager.exe'
+AppYear='2014'
+AppTitle='Bug and Test Case Manager'
+AppVersion='0.0.9'
+AppExeType='onefile'

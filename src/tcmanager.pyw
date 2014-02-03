@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: latin-1; py-indent-offset:4 -*-
+# -*- coding: utf-8; py-indent-offset:4 -*-
 ################################################################################
 # 
 #   Copyright (C) 2013 Daniel Rodriguez
@@ -26,13 +26,20 @@ from mvcbase import MvcContainer
 from controller import Controller
 from mainframe import MainFrame
 from model import Model
+import constants
 
-appname='tcmanager'
-vendorname=appname
+appname=constants.Appname
+vendorname=constants.Vendorname
 
 @MvcContainer
 class MainApp(wx.App):
     def OnInit(self):
+        self.name = '%s-%s' % (appname, wx.GetUserId())
+        self.instance = wx.SingleInstanceChecker(self.name)
+        if self.instance.IsAnotherRunning():
+            wx.MessageBox("Another instance is running", "ERROR")
+            return False
+
         wx.Log_SetActiveTarget(wx.LogStderr())
         # wx.Log_SetActiveTarget(wx.LogBuffer())
 

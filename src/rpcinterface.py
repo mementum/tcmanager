@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: latin-1; py-indent-offset:4 -*-
+# -*- coding: utf-8; py-indent-offset:4 -*-
 ################################################################################
 # 
 #   Copyright (C) 2014 Daniel Rodriguez
@@ -19,65 +19,42 @@
 #
 ################################################################################
 
-import Queue
-import threading
-import urlparse
+import datetime
 import xmlrpclib
 
+from tcmodel import Ticket
+from rpcsupport import RpcInterface
 
-class RpcThread(threading.Thread):
+class RpcSupport(object):
 
-    def __init__(self, group=None, target=None, name=None, *args, **kwargs):
-        threading.Thread(self, group=group, target=target, name=name, *args, **kwargs):
-        self.q = Queue.PriorityQueue()
+    def __init__(self, server, username, password):
+        self.rpc = RpcInterface(server, username, password)
 
-        self.url = ''
-        self.username = ''
-        self.password = ''
+    def get_tickets(self, ticket_ids):
+        multicall = self.rpc.multicall()
+        for ticket_id in ticket_ids:
+            multicall.ticket.get(ticket_id)
 
+        return map(Ticket, multicall()) # list
 
-    def run(self):
-        prio, data = self.q.get(block=True, timeout=None)
+    def get_tickets_by_id(self, ticket_ids):
+        tickets = self.get_tickets(ticket_ids)
+        return dict(map(lambda x: (x.id, x), tickets)) # dict indexed by ticket_id
 
-        if data is None:
-            return # finishing
+    def update_tickets(self, ticket_updates):
+        multicall = self.rpc.multicall()
+        for ticket_update in ticket_updates:
+            ticket_update = self.ticket_update_check(*ticket_update)
+            print "ticket_update", ticket_update, 
+            multicall.ticket.update(*ticket_update)
+        multicall()
 
-        method = getattr(self, data.reqmethod)
-        method(data)
+    def ticket_update_check(self, id, comment, attributes=None, notify=False, author='', when=None):
+        print "ticket", id, comment, attributes, notify, author, when
+        if not attributes:
+            attributes = dict()
+        if not when:
+            when = datetime.datetime.now()
+        when = xmlrpclib.DateTime(when)
 
-
-    def setUrl(self, baseurl, username, password):
-        spliturl = baseurl.urlsplit()
-        newsplit = list()
-        for elem in baseurl.urlsplit():
-            newsplit.append(elem)
-
-        if self.username:
-            prenetloc = self.username
-            if self.password:
-                prenetloc += ':%s' % self.password
-
-            newsplit[1] = '%s@%s' % (prenetloc, newsplit[1])
-
-        url =  urlparse.urlunsplit(newsplit)
-
-        try:
-            self.server = xmlrpclib.ServerProxy(url)
-        except xmlrpclib.ProtocolError:
-            wx.CallAfter() # signal the error
-        except: xmlrpclib.Fault:
-            wx.CallAfter() # signal the error
-
-        wx.CallAfter() # indicate success
-
-
-    def listRootCatalogs(self, data):
-        try:
-            self.server.testmanager.listSubCatalogs('-1'):
-        except xmlrpclib.ProtocolError:
-            wx.CallAfter() # signal the error
-        except: xmlrpclib.Fault:
-            wx.CallAfter() # signal the error
-
-        wx.CallAfter() # indicate success
-
+        return id, comment, attributes, notify, author, when

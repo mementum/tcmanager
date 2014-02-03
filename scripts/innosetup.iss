@@ -6,11 +6,14 @@
 ; hence the ..\build\xxxx to fall down to the base directory
 
 #define MyAppName "tcmanager"
-#define MyAppVersion "0.0.6"
+#define MyAppVersion "0.0.9"
 #define MyAppPublisher "Daniel Rodriguez"
 #define MyAppYear "2014"
 #define MyAppURL "https://github.com/mementum/tcmanager"
 #define MyAppExeName "tcmanager.exe"
+#define MyBuildDir "..\build\inno"
+#define MyDistDir "..\dist\inno"
+
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -27,17 +30,17 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-LicenseFile=..\build\innosetup\LICENSE
-;InfoBeforeFile=..\build\innosetup\README.md
+LicenseFile={#MyBuildDir}\LICENSE
+;InfoBeforeFile={#MyBuildDir}\README.md
 OutputBaseFilename={#MyAppName}-{#MyAppVersion}-setup
 Compression=lzma2/Ultra64
 SolidCompression=false
-OutputDir=..\dist\innosetup
+OutputDir={#MyDistDir}
 AppVerName={#MyAppVersion}
 InternalCompressLevel=Ultra64
 ShowLanguageDialog=no
 AppCopyright=Copyright (C) {#MyAppYear} {#MyAppPublisher}
-; SetupIconFile=..\build\innosetup\icons\{#MyAppName}.ico
+; SetupIconFile={#MyBuildDir}\icons\{#MyAppName}.ico
 ; For updates
 UsePreviousAppDir=yes
 CreateUninstallRegKey=no
@@ -51,7 +54,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: ..\build\innosetup\*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs uninsremovereadonly; 
+Source: {#MyBuildDir}\*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs uninsremovereadonly; 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

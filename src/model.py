@@ -33,8 +33,9 @@ import xlrd
 import xlsxwriter
 
 from config import ConfigInt, ConfigPrefix, ConfigString, ConfigBool
-# from excelsupport import ExcelFile
+from excelmodel import ExcelInput
 from mvcbase import ModelRole, PubSend
+from rpcinterface import RpcSupport
 from rpcsupport import RpcInterface
 from tcmodel import TestCatalog, TestCase, TestCaseInPlan, Ticket, TicketChangeLog
 
@@ -70,6 +71,17 @@ class Model(object):
 
     lifecardexcelup = ConfigString(name='lifecardexcelup', defvalue='')
     lifecardauthorup = ConfigString(name='lifecardauthorup', defvalue='')
+    lcardup_sheetname = ConfigString(name='lcardup_sheetname', defvalue='Sheet Name')
+    lcardup_row_start = ConfigString(name='lcardup_row_start', defvalue='2')
+    lcardup_col_ticket = ConfigString(name='lcardup_col_ticket', defvalue='D')
+    lcardup_col_resol = ConfigString(name='lcardup_col_resol', defvalue='A')
+    lcardup_col_comment = ConfigString(name='lcardup_col_comment', defvalue='B')
+    lcardup_status_open = ConfigBool(name='lcupstatusopen', defvalue=True)
+    lcardup_status_closed = ConfigBool(name='lcupstatusclosed', defvalue=False)
+    lcardup_status_investigation = ConfigBool(name='lcupstatusinvestigation', defvalue=False)
+    lcardup_status_fixed = ConfigBool(name='lcupstatusfixed', defvalue=False)
+    lcardup_status_rejected = ConfigBool(name='lcupstatusrejected', defvalue=False)
+    lcardup_status_new = ConfigBool(name='lcupstatusnew', defvalue=False)
 
     def __init__(self):
         self.serverpasswordshow = False
@@ -664,30 +676,11 @@ class Model(object):
         '''
 
         try:
-            self.LogAppend('Using Excel file %s' % self.lifecardexcelup)
-            workbook = xlrd.open_workbook(self.lifecardexcelup)
-            self.LogAppend('Choosing sheet "Bug Tracking"')
-            wksheet = workbook.sheet_by_name('Bug Tracking')
-
-            self.LogAppend('Compiling updates from Excel Table')
-            updates = OrderedDict()
-            row = 1
-            while True:
-                try:
-                    ticket_id = int(wksheet.cell_value(row, 3))
-                except IndexError, e:
-                    if row >= wksheet.nrows:
-                        # expected limit reached
-                        break
-                    raise e
-                except Exception, e:
-                    raise e
-
-                resolution = wksheet.cell_value(row, 0)
-                comment = wksheet.cell_value(row, 1)
-                if resolution or comment:
-                    updates[ticket_id] = (resolution, comment)
-                row += 1
+            self.LogAppend('Getting updates from %s/%s' % (self.lifecardexcelup, self.lcardup_sheetname))
+            exinput = ExcelInput(self.lifecardexcelup)
+            updates = exinput.get_lifecard_updates(
+                self.lcardup_sheetname, self.lcardup_row_start,
+                self.lcardup_col_ticket, self.lcardup_col_resol, self.lcardup_col_comment)
 
             if not updates:
                 self.LogAppend('No updated found on Lifecard')
@@ -696,21 +689,28 @@ class Model(object):
             self.LogAppend('%d updates found' % len(updates))
 
             self.LogAppend('Opening interface to the server')
-            rpc = RpcInterface(self.serverurl, self.serverusername, self.serverpassword)
-
+            rpc = RpcSupport(self.serverurl, self.serverusername, self.serverpassword)
             self.LogAppend('Compiling ticket list from server')
-            multicall = rpc.multicall()
-            for ticket_id in updates.iterkeys():
-                multicall.ticket.get(ticket_id)
-            tickets = map(Ticket, multicall()) # list
-            tickets = dict(map(lambda x: (x.id, x), tickets)) # dict indexed by ticket_id
+            tickets = rpc.get_tickets_by_id(updates.keys())
+
 
             self.LogAppend('Updating tickets')
+            tstatusup = list()
+            tstatusup.append('open') if self.lcardup_status_open else None
+            tstatusup.append('closed') if self.lcardup_status_closed else None
+            tstatusup.append('investigation') if self.lcardup_status_investigation else None
+            tstatusup.append('fixed') if self.lcardup_status_fixed else None
+            tstatusup.append('rejected') if self.lcardup_status_rejected else None
+            tstatusup.append('new') if self.lcardup_status_new else None
+            self.LogAppend('Will upload following ticket types: %s' % str(tstatusup))
+
+            self.LogAppend('Updating tickets')
+            ticket_updates = list()
             for ticket_id, value in updates.iteritems():
                 resolution, comment = value
                 ticket = tickets[ticket_id]
-                if False and ticket.status != 'open':
-                    self.LogAppend('Skipping Ticket %d with update but not open (%s)' % (ticket.id, ticket.status))
+                if ticket.status not in tstatusup:
+                    self.LogAppend('Skipping Ticket %d with status (%s)' % (ticket.id, ticket.status))
                     continue
                 self.LogAppend('Updating Ticket %d' % ticket_id)
                 attributes = dict()
@@ -718,10 +718,13 @@ class Model(object):
                     attributes['resolution'] = resolution
 
                 # Old Update --- Check ticket.py code and look for an example of 'action'
-                rpc.update(ticket_id, comment, attributes, author=self.lifecardauthorup)
+                # ticket_id, comment, attributes, notify, author, when are the parameters
+                ticket_updates.append((ticket_id, comment, attributes, False, self.lifecardauthorup, None))
+
+            self.LogAppend('Sending ticket updates to server')
+            rpc.update_tickets(ticket_updates)
 
             self.LogAppend('Finished updating Lifecard')
-
 
         except Exception, e:
             self.LogAppend('Error during LifeCard upload: %s' % str(e))

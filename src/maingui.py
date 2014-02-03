@@ -30,7 +30,11 @@ class MainFrame ( wx.Frame ):
 		self.m_panel8 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer12 = wx.BoxSizer( wx.VERTICAL )
 		
-		sbSizer13 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel8, wx.ID_ANY, wx.EmptyString ), wx.VERTICAL )
+		sbSizer12 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel8, wx.ID_ANY, wx.EmptyString ), wx.VERTICAL )
+		
+		bSizer49 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		bSizer50 = wx.BoxSizer( wx.VERTICAL )
 		
 		bSizer13 = wx.BoxSizer( wx.HORIZONTAL )
 		
@@ -39,29 +43,51 @@ class MainFrame ( wx.Frame ):
 		bSizer13.Add( self.m_staticText7, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_textCtrlServerUrl = wx.TextCtrl( self.m_panel8, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_PROCESS_ENTER )
-		bSizer13.Add( self.m_textCtrlServerUrl, 1, wx.ALL, 5 )
+		bSizer13.Add( self.m_textCtrlServerUrl, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
 		
 		
-		sbSizer13.Add( bSizer13, 0, wx.EXPAND, 5 )
+		bSizer50.Add( bSizer13, 0, wx.EXPAND, 5 )
 		
-		bSizer8 = wx.BoxSizer( wx.HORIZONTAL )
+		bSizer51 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_staticText3 = wx.StaticText( self.m_panel8, wx.ID_ANY, u"Username", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText3.Wrap( -1 )
-		bSizer8.Add( self.m_staticText3, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		self.m_checkBox6 = wx.CheckBox( self.m_panel8, wx.ID_ANY, u"Check Server Connection on Start", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBox6.Enable( False )
+		
+		bSizer51.Add( self.m_checkBox6, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		bSizer51.AddSpacer( ( 0, 0), 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBoxServerPasswordShow = wx.CheckBox( self.m_panel8, wx.ID_ANY, u"Show Password", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer51.Add( self.m_checkBoxServerPasswordShow, 0, wx.ALL|wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		bSizer50.Add( bSizer51, 1, wx.EXPAND, 5 )
+		
+		
+		bSizer49.Add( bSizer50, 1, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
+		
+		fgSizer8 = wx.FlexGridSizer( 0, 2, 0, 0 )
+		fgSizer8.AddGrowableCol( 1 )
+		fgSizer8.SetFlexibleDirection( wx.BOTH )
+		fgSizer8.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		
+		self.m_staticText25 = wx.StaticText( self.m_panel8, wx.ID_ANY, u"Username", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText25.Wrap( -1 )
+		fgSizer8.Add( self.m_staticText25, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_textCtrlServerUsername = wx.TextCtrl( self.m_panel8, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer8.Add( self.m_textCtrlServerUsername, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		fgSizer8.Add( self.m_textCtrlServerUsername, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
 		
 		self.m_staticText4 = wx.StaticText( self.m_panel8, wx.ID_ANY, u"Password", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText4.Wrap( -1 )
-		bSizer8.Add( self.m_staticText4, 0, wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM|wx.LEFT, 5 )
+		fgSizer8.Add( self.m_staticText4, 1, wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM|wx.LEFT, 5 )
 		
 		self.m_panel5 = wx.Panel( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer181 = wx.BoxSizer( wx.VERTICAL )
 		
 		self.m_textCtrlServerPassword = wx.TextCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_PASSWORD )
-		bSizer181.Add( self.m_textCtrlServerPassword, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
+		bSizer181.Add( self.m_textCtrlServerPassword, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
 		
 		self.m_textCtrlServerPasswordShown = wx.TextCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_textCtrlServerPasswordShown.Hide()
@@ -72,79 +98,54 @@ class MainFrame ( wx.Frame ):
 		self.m_panel5.SetSizer( bSizer181 )
 		self.m_panel5.Layout()
 		bSizer181.Fit( self.m_panel5 )
-		bSizer8.Add( self.m_panel5, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		fgSizer8.Add( self.m_panel5, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
-		sbSizer13.Add( bSizer8, 0, wx.EXPAND, 5 )
-		
-		self.m_checkBoxServerPasswordShow = wx.CheckBox( self.m_panel8, wx.ID_ANY, u"Show Password", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer13.Add( self.m_checkBoxServerPasswordShow, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
-		
-		self.m_staticline17 = wx.StaticLine( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-		sbSizer13.Add( self.m_staticline17, 0, wx.EXPAND |wx.ALL, 5 )
-		
-		bSizer47 = wx.BoxSizer( wx.HORIZONTAL )
-		
-		self.m_staticText29 = wx.StaticText( self.m_panel8, wx.ID_ANY, u"Vendor Username in System (to Filter Comments/Actions in LifeCard)", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_staticText29.Wrap( -1 )
-		bSizer47.Add( self.m_staticText29, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-		
-		self.m_textCtrlLifeCardAuthorUp = wx.TextCtrl( self.m_panel8, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer47.Add( self.m_textCtrlLifeCardAuthorUp, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer49.Add( fgSizer8, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
-		sbSizer13.Add( bSizer47, 0, 0, 5 )
+		sbSizer12.Add( bSizer49, 1, wx.EXPAND, 5 )
 		
-		self.m_staticline7 = wx.StaticLine( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-		sbSizer13.Add( self.m_staticline7, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 5 )
+		self.m_staticline32 = wx.StaticLine( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		sbSizer12.Add( self.m_staticline32, 0, wx.EXPAND |wx.ALL, 5 )
 		
 		self.m_button10 = wx.Button( self.m_panel8, wx.ID_ANY, u"Test Server Connection", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_button10.Enable( False )
 		
-		sbSizer13.Add( self.m_button10, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		sbSizer12.Add( self.m_button10, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
 		
-		bSizer12.Add( sbSizer13, 1, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
-		
-		sbSizer5 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel8, wx.ID_ANY, wx.EmptyString ), wx.VERTICAL )
-		
-		self.m_checkBox6 = wx.CheckBox( self.m_panel8, wx.ID_ANY, u"Check Server Connection on Start", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_checkBox6.Enable( False )
-		
-		sbSizer5.Add( self.m_checkBox6, 0, wx.ALL, 5 )
-		
-		
-		bSizer12.Add( sbSizer5, 0, wx.EXPAND, 5 )
+		bSizer12.Add( sbSizer12, 0, wx.EXPAND, 5 )
 		
 		sbSizer6 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel8, wx.ID_ANY, u"Test Catalogs" ), wx.VERTICAL )
 		
-		bSizer22 = wx.BoxSizer( wx.HORIZONTAL )
+		bSizer52 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_staticText151 = wx.StaticText( self.m_panel8, wx.ID_ANY, u"Available Catalogs", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText151.Wrap( -1 )
-		bSizer22.Add( self.m_staticText151, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer52.Add( self.m_staticText151, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		m_choiceCatalogsChoices = []
 		self.m_choiceCatalogs = wx.Choice( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choiceCatalogsChoices, 0 )
 		self.m_choiceCatalogs.SetSelection( 0 )
-		bSizer22.Add( self.m_choiceCatalogs, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer52.Add( self.m_choiceCatalogs, 1, wx.ALL, 5 )
 		
 		self.m_button16 = wx.Button( self.m_panel8, wx.ID_ANY, u"Refresh", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer22.Add( self.m_button16, 0, wx.ALL, 5 )
+		bSizer52.Add( self.m_button16, 0, wx.TOP|wx.RIGHT|wx.LEFT, 5 )
 		
 		
-		sbSizer6.Add( bSizer22, 1, wx.EXPAND, 5 )
+		sbSizer6.Add( bSizer52, 0, wx.EXPAND, 5 )
 		
-		bSizer23 = wx.BoxSizer( wx.HORIZONTAL )
+		bSizer22 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_button14 = wx.Button( self.m_panel8, wx.ID_ANY, u"Delete Selected", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer23.Add( self.m_button14, 0, wx.ALL, 5 )
+		bSizer22.Add( self.m_button14, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_button15 = wx.Button( self.m_panel8, wx.ID_ANY, u"Delete All", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer23.Add( self.m_button15, 0, wx.ALL, 5 )
+		bSizer22.Add( self.m_button15, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
-		sbSizer6.Add( bSizer23, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		sbSizer6.Add( bSizer22, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
 		
 		bSizer12.Add( sbSizer6, 0, wx.EXPAND, 5 )
@@ -422,19 +423,21 @@ class MainFrame ( wx.Frame ):
 		self.m_staticText16.Wrap( -1 )
 		fgSizer211.Add( self.m_staticText16, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
+		bSizer53 = wx.BoxSizer( wx.VERTICAL )
+		
 		self.m_dirPickerDirAttachments = wx.DirPickerCtrl( self.m_panel7, wx.ID_ANY, wx.EmptyString, u"Select a folder", wx.DefaultPosition, wx.DefaultSize, wx.DIRP_DEFAULT_STYLE )
-		fgSizer211.Add( self.m_dirPickerDirAttachments, 0, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer53.Add( self.m_dirPickerDirAttachments, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
 		
 		
-		sbSizer321.Add( fgSizer211, 1, wx.EXPAND, 5 )
+		fgSizer211.Add( bSizer53, 1, wx.EXPAND, 5 )
 		
 		
-		bSizer24.Add( sbSizer321, 0, wx.EXPAND, 5 )
+		sbSizer321.Add( fgSizer211, 0, wx.EXPAND, 5 )
 		
-		self.m_staticline142 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-		bSizer24.Add( self.m_staticline142, 0, wx.EXPAND |wx.ALL, 5 )
 		
-		sbSizer8 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel7, wx.ID_ANY, u"Bug Status to Download" ), wx.HORIZONTAL )
+		bSizer24.Add( sbSizer321, 1, wx.EXPAND, 5 )
+		
+		sbSizer8 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel7, wx.ID_ANY, u"Bug States to Download" ), wx.HORIZONTAL )
 		
 		self.m_checkBoxDownloadOpen = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Open", wx.DefaultPosition, wx.DefaultSize, 0 )
 		sbSizer8.Add( self.m_checkBoxDownloadOpen, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -476,7 +479,7 @@ class MainFrame ( wx.Frame ):
 		sbSizer8.Add( self.m_checkBoxDownloadNew, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
-		bSizer24.Add( sbSizer8, 0, wx.EXPAND, 5 )
+		bSizer24.Add( sbSizer8, 0, wx.EXPAND|wx.TOP, 5 )
 		
 		bSizer26 = wx.BoxSizer( wx.HORIZONTAL )
 		
@@ -497,25 +500,154 @@ class MainFrame ( wx.Frame ):
 		self.m_panel71 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer241 = wx.BoxSizer( wx.VERTICAL )
 		
-		sbSizer3211 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel71, wx.ID_ANY, wx.EmptyString ), wx.VERTICAL )
+		sbSizer9 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel71, wx.ID_ANY, u"LifeCard Details" ), wx.VERTICAL )
 		
-		fgSizer2111 = wx.FlexGridSizer( 0, 2, 0, 0 )
-		fgSizer2111.AddGrowableCol( 1 )
-		fgSizer2111.SetFlexibleDirection( wx.BOTH )
-		fgSizer2111.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		bSizer32 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_staticText9111 = wx.StaticText( self.m_panel71, wx.ID_ANY, u"LifeCard", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText9111 = wx.StaticText( self.m_panel71, wx.ID_ANY, u"Filename", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText9111.Wrap( -1 )
-		fgSizer2111.Add( self.m_staticText9111, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer32.Add( self.m_staticText9111, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_filePickerLifeCardExcelUp = wx.FilePickerCtrl( self.m_panel71, wx.ID_ANY, wx.EmptyString, u"Select a file", u"Excel Files (*.xlsx;*.xls)|*.xlsx;*.xls|All Files (*.*)|*.*", wx.DefaultPosition, wx.DefaultSize, wx.FLP_CHANGE_DIR|wx.FLP_FILE_MUST_EXIST|wx.FLP_OPEN|wx.FLP_USE_TEXTCTRL )
-		fgSizer2111.Add( self.m_filePickerLifeCardExcelUp, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
+		bSizer32.Add( self.m_filePickerLifeCardExcelUp, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
-		sbSizer3211.Add( fgSizer2111, 1, wx.EXPAND, 5 )
+		sbSizer9.Add( bSizer32, 0, wx.EXPAND, 5 )
+		
+		self.m_staticline31 = wx.StaticLine( self.m_panel71, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		sbSizer9.Add( self.m_staticline31, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		gSizer1 = wx.GridSizer( 0, 3, 0, 0 )
+		
+		bSizer33 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText24 = wx.StaticText( self.m_panel71, wx.ID_ANY, u"Sheet Name", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+		self.m_staticText24.Wrap( -1 )
+		bSizer33.Add( self.m_staticText24, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_textCtrlLifeCardUpSheetName = wx.TextCtrl( self.m_panel71, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer33.Add( self.m_textCtrlLifeCardUpSheetName, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
-		bSizer241.Add( sbSizer3211, 0, wx.EXPAND, 5 )
+		gSizer1.Add( bSizer33, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		bSizer331 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText91111 = wx.StaticText( self.m_panel71, wx.ID_ANY, u"Ticket Id Col", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+		self.m_staticText91111.Wrap( -1 )
+		bSizer331.Add( self.m_staticText91111, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_textCtrlLifeCardUpColTicketId = wx.TextCtrl( self.m_panel71, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer331.Add( self.m_textCtrlLifeCardUpColTicketId, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		gSizer1.Add( bSizer331, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		bSizer3311 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		
+		bSizer3311.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		
+		gSizer1.Add( bSizer3311, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		bSizer40 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText23 = wx.StaticText( self.m_panel71, wx.ID_ANY, u"Start Row", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+		self.m_staticText23.Wrap( -1 )
+		bSizer40.Add( self.m_staticText23, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_textCtrlLifeCardUpRowStart = wx.TextCtrl( self.m_panel71, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer40.Add( self.m_textCtrlLifeCardUpRowStart, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		gSizer1.Add( bSizer40, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		bSizer401 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText21 = wx.StaticText( self.m_panel71, wx.ID_ANY, u"Resolution Col", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+		self.m_staticText21.Wrap( -1 )
+		bSizer401.Add( self.m_staticText21, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_textCtrlLifeCardUpColResolution = wx.TextCtrl( self.m_panel71, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer401.Add( self.m_textCtrlLifeCardUpColResolution, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		gSizer1.Add( bSizer401, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		bSizer4011 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText22 = wx.StaticText( self.m_panel71, wx.ID_ANY, u"Comment Col", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_RIGHT )
+		self.m_staticText22.Wrap( -1 )
+		bSizer4011.Add( self.m_staticText22, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_textCtrlLifeCardUpColComment = wx.TextCtrl( self.m_panel71, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer4011.Add( self.m_textCtrlLifeCardUpColComment, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		gSizer1.Add( bSizer4011, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		sbSizer9.Add( gSizer1, 1, wx.EXPAND, 5 )
+		
+		
+		bSizer241.Add( sbSizer9, 0, wx.EXPAND, 5 )
+		
+		sbSizer10 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel71, wx.ID_ANY, u"Allow Updates on Ticket Status" ), wx.HORIZONTAL )
+		
+		self.m_checkBoxLifeCardUpStatusOpen = wx.CheckBox( self.m_panel71, wx.ID_ANY, u"Open", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer10.Add( self.m_checkBoxLifeCardUpStatusOpen, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline18 = wx.StaticLine( self.m_panel71, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		sbSizer10.Add( self.m_staticline18, 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBoxLifeCardUpStatusClosed = wx.CheckBox( self.m_panel71, wx.ID_ANY, u"Closed", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer10.Add( self.m_checkBoxLifeCardUpStatusClosed, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline181 = wx.StaticLine( self.m_panel71, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		sbSizer10.Add( self.m_staticline181, 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBoxLifeCardUpStatusInvestigation = wx.CheckBox( self.m_panel71, wx.ID_ANY, u"Investigation", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer10.Add( self.m_checkBoxLifeCardUpStatusInvestigation, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline1811 = wx.StaticLine( self.m_panel71, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		sbSizer10.Add( self.m_staticline1811, 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBoxLifeCardUpStatusFixed = wx.CheckBox( self.m_panel71, wx.ID_ANY, u"Fixed", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer10.Add( self.m_checkBoxLifeCardUpStatusFixed, 0, wx.ALL, 5 )
+		
+		
+		sbSizer10.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.m_staticline18111 = wx.StaticLine( self.m_panel71, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		sbSizer10.Add( self.m_staticline18111, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxLifeCardUpStatusRejected = wx.CheckBox( self.m_panel71, wx.ID_ANY, u"Rejected", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer10.Add( self.m_checkBoxLifeCardUpStatusRejected, 0, wx.ALL, 5 )
+		
+		
+		sbSizer10.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.m_staticline181111 = wx.StaticLine( self.m_panel71, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		sbSizer10.Add( self.m_staticline181111, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxLifeCardUpStatusNew = wx.CheckBox( self.m_panel71, wx.ID_ANY, u"New", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer10.Add( self.m_checkBoxLifeCardUpStatusNew, 0, wx.ALL, 5 )
+		
+		
+		bSizer241.Add( sbSizer10, 0, wx.EXPAND, 5 )
+		
+		sbSizer11 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel71, wx.ID_ANY, u"Vendor Name" ), wx.HORIZONTAL )
+		
+		self.m_textCtrlLifeCardAuthorUp = wx.TextCtrl( self.m_panel71, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer11.Add( self.m_textCtrlLifeCardAuthorUp, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticText29 = wx.StaticText( self.m_panel71, wx.ID_ANY, u"To use on the web system for updates sent by the vendor", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText29.Wrap( -1 )
+		sbSizer11.Add( self.m_staticText29, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		bSizer241.Add( sbSizer11, 0, wx.EXPAND, 5 )
 		
 		bSizer261 = wx.BoxSizer( wx.HORIZONTAL )
 		
@@ -524,11 +656,6 @@ class MainFrame ( wx.Frame ):
 		
 		
 		bSizer241.Add( bSizer261, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
-		
-		bSizer271 = wx.BoxSizer( wx.VERTICAL )
-		
-		
-		bSizer241.Add( bSizer271, 1, wx.EXPAND, 5 )
 		
 		
 		self.m_panel71.SetSizer( bSizer241 )
@@ -547,7 +674,7 @@ class MainFrame ( wx.Frame ):
 		self.m_staticText5.Wrap( -1 )
 		bSizer10.Add( self.m_staticText5, 0, wx.ALL, 5 )
 		
-		self.m_textCtrlLog = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 600,200 ), wx.TE_MULTILINE|wx.TE_READONLY )
+		self.m_textCtrlLog = wx.TextCtrl( self.m_panel6, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 600,250 ), wx.TE_MULTILINE|wx.TE_READONLY )
 		bSizer10.Add( self.m_textCtrlLog, 1, wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
 		bSizer9 = wx.BoxSizer( wx.HORIZONTAL )
@@ -586,12 +713,10 @@ class MainFrame ( wx.Frame ):
 		# Connect Events
 		self.Bind( wx.EVT_SIZE, self.OnSizeMainFrame )
 		self.m_textCtrlServerUrl.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerUrl )
+		self.m_checkBoxServerPasswordShow.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxShowServerPassword )
 		self.m_textCtrlServerUsername.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerUsername )
 		self.m_textCtrlServerPassword.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerPassword )
 		self.m_textCtrlServerPasswordShown.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerPassword )
-		self.m_checkBoxServerPasswordShow.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxShowServerPassword )
-		self.m_staticText29.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusTicketUpdateAuthor )
-		self.m_textCtrlLifeCardAuthorUp.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocuslLifeCardAuthorUp )
 		self.m_button10.Bind( wx.EVT_BUTTON, self.OnButtonClickApplyServerSettings )
 		self.m_button16.Bind( wx.EVT_BUTTON, self.OnButtonClickUploadReloadCatalogs )
 		self.m_button14.Bind( wx.EVT_BUTTON, self.OnButtonClickCatalogsDelete )
@@ -626,6 +751,19 @@ class MainFrame ( wx.Frame ):
 		self.m_button20.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardDownload )
 		self.m_button17.Bind( wx.EVT_BUTTON, self.OnButtonClickDownloadAttachments )
 		self.m_filePickerLifeCardExcelUp.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChangedLifeCardExcelUp )
+		self.m_textCtrlLifeCardUpSheetName.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusLifeCardUpSheetName )
+		self.m_textCtrlLifeCardUpColTicketId.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusLifeCardUpColTicketId )
+		self.m_textCtrlLifeCardUpRowStart.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusLifeCardUpColRowStart )
+		self.m_textCtrlLifeCardUpColResolution.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusLifeCardUpColResolution )
+		self.m_textCtrlLifeCardUpColComment.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusLifeCardUpColComment )
+		self.m_checkBoxLifeCardUpStatusOpen.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLifeCardUpStatusOpen )
+		self.m_checkBoxLifeCardUpStatusClosed.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLifeCardUpStatusClosed )
+		self.m_checkBoxLifeCardUpStatusInvestigation.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLifeCardUpStatusInvestigation )
+		self.m_checkBoxLifeCardUpStatusFixed.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLifeCardUpStatusFixed )
+		self.m_checkBoxLifeCardUpStatusRejected.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLifeCardUpStatusRejected )
+		self.m_checkBoxLifeCardUpStatusNew.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLifeCardUpStatusNew )
+		self.m_textCtrlLifeCardAuthorUp.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocuslLifeCardAuthorUp )
+		self.m_staticText29.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusTicketUpdateAuthor )
 		self.m_button201.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardUpload )
 		self.m_button7.Bind( wx.EVT_BUTTON, self.OnButtonClearLog )
 		self.m_button6.Bind( wx.EVT_BUTTON, self.OnButtonClickExit )
@@ -643,21 +781,15 @@ class MainFrame ( wx.Frame ):
 	def OnKillFocusServerUrl( self, event ):
 		event.Skip()
 	
+	def OnCheckBoxShowServerPassword( self, event ):
+		event.Skip()
+	
 	def OnKillFocusServerUsername( self, event ):
 		event.Skip()
 	
 	def OnKillFocusServerPassword( self, event ):
 		event.Skip()
 	
-	
-	def OnCheckBoxShowServerPassword( self, event ):
-		event.Skip()
-	
-	def OnKillFocusTicketUpdateAuthor( self, event ):
-		event.Skip()
-	
-	def OnKillFocuslLifeCardAuthorUp( self, event ):
-		event.Skip()
 	
 	def OnButtonClickApplyServerSettings( self, event ):
 		event.Skip()
@@ -753,6 +885,45 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 	
 	def OnFileChangedLifeCardExcelUp( self, event ):
+		event.Skip()
+	
+	def OnKillFocusLifeCardUpSheetName( self, event ):
+		event.Skip()
+	
+	def OnKillFocusLifeCardUpColTicketId( self, event ):
+		event.Skip()
+	
+	def OnKillFocusLifeCardUpColRowStart( self, event ):
+		event.Skip()
+	
+	def OnKillFocusLifeCardUpColResolution( self, event ):
+		event.Skip()
+	
+	def OnKillFocusLifeCardUpColComment( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLifeCardUpStatusOpen( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLifeCardUpStatusClosed( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLifeCardUpStatusInvestigation( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLifeCardUpStatusFixed( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLifeCardUpStatusRejected( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLifeCardUpStatusNew( self, event ):
+		event.Skip()
+	
+	def OnKillFocuslLifeCardAuthorUp( self, event ):
+		event.Skip()
+	
+	def OnKillFocusTicketUpdateAuthor( self, event ):
 		event.Skip()
 	
 	def OnButtonClickLifeCardUpload( self, event ):

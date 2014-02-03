@@ -18,6 +18,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ################################################################################
+import cPickle
 
 import wx
 
@@ -30,33 +31,44 @@ def ConfigPrefix(cfgprefix):
 class ConfigItem(object):
     def __init__(self, name, defvalue):
         self.name = name
-        # Will be created on demand. Absence (AttributeError) signals
-        # it has not yet been set
-        # self.icache = None
-        self.defvalue = defvalue
+        self.icache = dict()
+        # Defvalue will be passed through postrd
+        # if returned because no value is in the cache
+        # and therefore we need to keep it like if it
+        # was the value we wrote down to the registry
+        # or config file
+        self.defvalue = self.prewr(defvalue)
 
     def getname(self, instance):
         if hasattr(instance, '_cfgprefix'):
             return '%s/%s' % (instance._cfgprefix, self.name)
         return self.name
 
+    def postrd(self, value):
+        return value
+
+    def prewr(self, value):
+        return value
+
     def __get__(self, instance, owner=None):
         try:
-            return self.icache
-        except AttributeError:
+            return self.icache[instance]
+        except KeyError:
             retval = self.rd(self.getname(instance), self.defvalue)
+            retval = self.postrd(retval)
             self.config.Flush() # in case defvalue has been used
-            self.icache = retval
+            self.icache[instance] = retval
             return retval
             
     def __set__(self, instance, value):
         try:
-            if self.icache == value:
-                return
-        except AttributeError:
+            if self.icache[instance] == value:
+                return # avoid writing to files/registry
+        except KeyError:
             pass
 
-        self.icache = value
+        self.icache[instance] = value
+        value = self.prewr(value)
         self.wr(self.getname(instance), value)
         self.config.Flush()
 
@@ -87,3 +99,19 @@ class ConfigInt(ConfigItem):
 class ConfigFloat(ConfigItem):
     wrattr = 'WriteFloat'
     rdattr = 'ReadFloat'
+
+class ConfigList(ConfigString):
+    def __init__(self, name, defvalue=[]):
+        # No problem with default value [] because
+        # it's going to be pickled in the constructors
+        # parent and the result is a string which
+        # is no longer the memoized string
+        ConfigString.__init__(self, name, defvalue)
+        
+    def postrd(self, value):
+        return cPickle.loads(value)
+
+    def prewr(self, value):
+        return cPickle.dumps(value)
+        
+            

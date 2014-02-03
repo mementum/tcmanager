@@ -159,8 +159,8 @@ class Controller(object):
             return
 
         if self._model.uploadusecatalog:
-            item = self.m_choiceUploadCatalogs.GetSelection()
-            catalog = self.m_choiceUploadCatalogs.GetSelection(item)
+            item = self._view.m_choiceUploadCatalogs.GetSelection()
+            catalog = self._view.m_choiceUploadCatalogs.GetSelection(item)
             self._model.uploadusecatalogid = catalog[0]
 
         self._model.UploadExcel()
@@ -266,6 +266,50 @@ class Controller(object):
     ############################################################
     # LifeCard Upload
     ############################################################
+    @ViewManager
+    def OnCheckBoxLifeCardUpStatusOpen(self, event):
+        self._model.lcardup_status_open = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLifeCardUpStatusClosed(self, event):
+        self._model.lcardup_status_closed = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLifeCardUpStatusInvestigation(self, event):
+        self._model.lcardup_status_investigation = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLifeCardUpStatusFixed(self, event):
+        self._model.lcardup_status_fixed = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLifeCardUpStatusRejected(self, event):
+        self._model.lcardup_status_rejected = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLifeCardUpStatusNew(self, event):
+        self._model.lcardup_status_new = event.IsChecked()
+
+    @ViewManager
+    def OnKillFocusLifeCardUpSheetName(self, event):
+        self._model.lcardup_sheetname = self._view.m_textCtrlLifeCardUpSheetName.GetValue()
+    
+    @ViewManager
+    def OnKillFocusLifeCardUpColRowStart(self, event):
+        self._model.lcardup_row_start = self._view.m_textCtrlLifeCardUpRowStart.GetValue()
+
+    @ViewManager
+    def OnKillFocusLifeCardUpColTicketId(self, event):
+        self._model.lcardup_col_ticket = self._view.m_textCtrlLifeCardUpColTicketId.GetValue()
+
+    @ViewManager
+    def OnKillFocusLifeCardUpColResolution(self, event):
+        self._model.lcardup_col_resol = self._view.m_textCtrlLifeCardUpColResolution.GetValue()
+
+    @ViewManager
+    def OnKillFocusLifeCardUpColComment(self, event):
+        self._model.lcardup_col_comment = self._view.m_textCtrlLifeCardUpColComment.GetValue()
+
     @ViewManager
     def OnFileChangedLifeCardExcelUp(self, event):
         self._model.lifecardexcelup = self._view.m_filePickerLifeCardExcelUp.GetPath()
