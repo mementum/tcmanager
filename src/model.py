@@ -597,17 +597,21 @@ class Model(object):
                 if self.lcdowncopywithvendorcomments:
                     exinstances.append((venexcelfile, ltrange2))
 
-                for excel_file, ticket_range in exinstances:
+                wkbooks = list()
+                xls = list()
 
+                for excel_file, ticket_range in exinstances:
                     self.LogAppend('Opening Workbook %s' % excelfile)
                     pythoncom.CoInitialize()
                     # xl = Dispatch('Excel.Application')
                     # xl = win32com.client.gencache.EnsureDispatchEx("Excel.Application")
                     xl = DispatchEx('Excel.Application') # Opens different instance
+                    xls.append(xl)
                     xl.Visible = 1
-                    xl.Interactive = True if self.lcdownkeepexcelopen else False
+                    # xl.Interactive = True if self.lcdownkeepexcelopen else False
+                    xl.Interactive = True
                     wkbook = xl.Workbooks.Open(excel_file)
-
+                    wkbooks.append(wkbook)
                     if not lrange:
                         self.LogAppend('No test cases to write down to Excel')
                     else:
@@ -646,20 +650,39 @@ class Model(object):
                         wksheet.Range(topleft, botright).Value = ticket_range
                         self.LogAppend('End downloading tickets information to %s' % excel_file)
 
-            self.LogAppend('End downloading to Lifecard')
+                    try:
+                        if not self.lcdownexcelnotsave:
+                            self.LogAppend('Saving workbook')
+                            wkbook.Save()
+                        if not self.lcdownkeepexcelopen:
+                            self.LogAppend('Closing workbook and Quitting Excel')
+                            wkbook.Close(False)
+                            wkbooks.remove(wkbook)
+                            xl.Quit()
+                            xls.remove(xl)
+                    except Exception, e:
+                        self.LogAppend('Error saving/closing/quitting Excel file: %s' % str(e))
+
+                self.LogAppend('End downloading to Lifecard')
 
         except Exception, e:
             self.LogAppend('Error during Download to LifeCard: %s' % str(e))
-        if wkbook:
-            try:
-                self.LogAppend('Saving and closing worksheet. Quitting Excel')
-                if not self.lcdownexcelnotsave:
-                    wkbook.Save()
-                if not self.lcdownkeepexcelopen:
+
+        if not self.lcdownkeepexcelopen:
+            self.LogAppend('Trying to clean up any Excel leftover if needed')
+            for wkbook in wkbooks:
+                try:
                     wkbook.Close(False)
+                except Exception:
+                    pass
+
+            for xl in xls:
+                try:
                     xl.Quit()
-            except Exception, e:
-                self.LogAppend('Error saving/closing/quitting Excel file: %s' % str(e))
+                except Exception:
+                    pass
+
+        self.LogAppend('End cleaning up to Lifecard')
 
 
     #@PubSend('lifecarddownloadingattach')
