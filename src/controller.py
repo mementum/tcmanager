@@ -62,8 +62,16 @@ class Controller(object):
     # SERVER CONFIG
     ############################################################
     @ViewManager
-    def OnKillFocusServerUrl(self, event):
-        self._model.serverurl = self._view.m_textCtrlServerUrl.GetValue()
+    def OnComboboxServerUrl(self, event):
+        # self._model.serverurl = self._view.m_comboBoxServerUrl.GetStringSelection()
+        self._model.serverurl = event.GetString()
+
+    @ViewManager
+    def OnKillFocusComboboxServerUrl(self, event):
+        serverurl = self._view.m_comboBoxServerUrl.GetValue()
+        if serverurl not in self._model.serverurls:
+            self._view.m_comboBoxServerUrl.Append(serverurl)
+            self._model.serverurls = self._view.m_comboBoxServerUrl.GetItems()
 
     @ViewManager
     def OnKillFocusServerUsername(self, event):

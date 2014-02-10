@@ -54,7 +54,15 @@ class MainFrame(maingui.MainFrame):
         ############################################################
         # SERVER CONFIG
         ############################################################
-        self.m_textCtrlServerUrl.SetValue(self._model.serverurl)
+        self.m_comboBoxServerUrl.SetItems(self._model.serverurls)
+        if self._model.serverurl:
+            # For compatibility with previous TextCtrl
+            if self._model.serverurl not in self._model.serverurls:
+                self.m_comboBoxServerUrl.Append(self._model.serverurl)
+                self._model.serverurls = self.m_comboBoxServerUrl.GetItems()
+
+            self.m_comboBoxServerUrl.SetStringSelection(self._model.serverurl)
+
         self.m_textCtrlServerUsername.SetValue(self._model.serverusername)
         self.m_textCtrlServerPassword.SetValue(self._model.serverpassword)
         self.m_checkBoxServerPasswordShow.SetValue(self._model.serverpasswordshow)

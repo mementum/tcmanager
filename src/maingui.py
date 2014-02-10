@@ -30,89 +30,102 @@ class MainFrame ( wx.Frame ):
 		self.m_panel8 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer12 = wx.BoxSizer( wx.VERTICAL )
 		
-		sbSizer12 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel8, wx.ID_ANY, wx.EmptyString ), wx.VERTICAL )
+		sbSizer12 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel8, wx.ID_ANY, u"Server Details" ), wx.VERTICAL )
 		
-		bSizer49 = wx.BoxSizer( wx.HORIZONTAL )
-		
-		bSizer50 = wx.BoxSizer( wx.VERTICAL )
-		
-		bSizer13 = wx.BoxSizer( wx.HORIZONTAL )
+		fgSizer5 = wx.FlexGridSizer( 0, 2, 0, 0 )
+		fgSizer5.AddGrowableCol( 1 )
+		fgSizer5.AddGrowableCol( 3 )
+		fgSizer5.SetFlexibleDirection( wx.BOTH )
+		fgSizer5.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		
 		self.m_staticText7 = wx.StaticText( self.m_panel8, wx.ID_ANY, u"Server Url", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText7.Wrap( -1 )
-		bSizer13.Add( self.m_staticText7, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		fgSizer5.Add( self.m_staticText7, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
-		self.m_textCtrlServerUrl = wx.TextCtrl( self.m_panel8, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_PROCESS_ENTER )
-		bSizer13.Add( self.m_textCtrlServerUrl, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
+		bSizer431 = wx.BoxSizer( wx.HORIZONTAL )
 		
+		m_comboBoxServerUrlChoices = []
+		self.m_comboBoxServerUrl = wx.ComboBox( self.m_panel8, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, m_comboBoxServerUrlChoices, wx.CB_DROPDOWN|wx.CB_SORT )
+		bSizer431.Add( self.m_comboBoxServerUrl, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
-		bSizer50.Add( bSizer13, 0, wx.EXPAND, 5 )
+		self.m_button202 = wx.Button( self.m_panel8, wx.ID_ANY, u"Del Url", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_button202.Enable( False )
 		
-		bSizer51 = wx.BoxSizer( wx.HORIZONTAL )
-		
-		self.m_checkBox6 = wx.CheckBox( self.m_panel8, wx.ID_ANY, u"Check Server Connection on Start", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_checkBox6.Enable( False )
-		
-		bSizer51.Add( self.m_checkBox6, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer431.Add( self.m_button202, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
-		bSizer51.AddSpacer( ( 0, 0), 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
-		
-		self.m_checkBoxServerPasswordShow = wx.CheckBox( self.m_panel8, wx.ID_ANY, u"Show Password", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer51.Add( self.m_checkBoxServerPasswordShow, 0, wx.ALL|wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
-		
-		
-		bSizer50.Add( bSizer51, 1, wx.EXPAND, 5 )
-		
-		
-		bSizer49.Add( bSizer50, 1, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
-		
-		fgSizer8 = wx.FlexGridSizer( 0, 2, 0, 0 )
-		fgSizer8.AddGrowableCol( 1 )
-		fgSizer8.SetFlexibleDirection( wx.BOTH )
-		fgSizer8.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		fgSizer5.Add( bSizer431, 1, wx.EXPAND, 5 )
 		
 		self.m_staticText25 = wx.StaticText( self.m_panel8, wx.ID_ANY, u"Username", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText25.Wrap( -1 )
-		fgSizer8.Add( self.m_staticText25, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		fgSizer5.Add( self.m_staticText25, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		bSizer44 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_textCtrlServerUsername = wx.TextCtrl( self.m_panel8, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer8.Add( self.m_textCtrlServerUsername, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
+		bSizer44.Add( self.m_textCtrlServerUsername, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_button211 = wx.Button( self.m_panel8, wx.ID_ANY, u"Del Username", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer44.Add( self.m_button211, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		fgSizer5.Add( bSizer44, 0, 0, 5 )
 		
 		self.m_staticText4 = wx.StaticText( self.m_panel8, wx.ID_ANY, u"Password", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText4.Wrap( -1 )
-		fgSizer8.Add( self.m_staticText4, 1, wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM|wx.LEFT, 5 )
+		fgSizer5.Add( self.m_staticText4, 0, wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM|wx.LEFT, 5 )
+		
+		bSizer45 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_panel5 = wx.Panel( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-		bSizer181 = wx.BoxSizer( wx.VERTICAL )
+		bSizer181 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.m_textCtrlServerPassword = wx.TextCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_PASSWORD )
-		bSizer181.Add( self.m_textCtrlServerPassword, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
+		bSizer181.Add( self.m_textCtrlServerPassword, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_textCtrlServerPasswordShown = wx.TextCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_textCtrlServerPasswordShown.Hide()
 		
-		bSizer181.Add( self.m_textCtrlServerPasswordShown, 1, wx.ALL|wx.EXPAND, 5 )
+		bSizer181.Add( self.m_textCtrlServerPasswordShown, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
 		self.m_panel5.SetSizer( bSizer181 )
 		self.m_panel5.Layout()
 		bSizer181.Fit( self.m_panel5 )
-		fgSizer8.Add( self.m_panel5, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer45.Add( self.m_panel5, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBoxServerPasswordShow = wx.CheckBox( self.m_panel8, wx.ID_ANY, u"Show Password", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer45.Add( self.m_checkBoxServerPasswordShow, 0, wx.ALL|wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
-		bSizer49.Add( fgSizer8, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		fgSizer5.Add( bSizer45, 1, wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
-		sbSizer12.Add( bSizer49, 1, wx.EXPAND, 5 )
+		sbSizer12.Add( fgSizer5, 1, wx.EXPAND, 5 )
 		
 		self.m_staticline32 = wx.StaticLine( self.m_panel8, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		sbSizer12.Add( self.m_staticline32, 0, wx.EXPAND |wx.ALL, 5 )
 		
+		bSizer46 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		
+		bSizer46.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
 		self.m_button10 = wx.Button( self.m_panel8, wx.ID_ANY, u"Test Server Connection", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_button10.Enable( False )
 		
-		sbSizer12.Add( self.m_button10, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		bSizer46.Add( self.m_button10, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBox6 = wx.CheckBox( self.m_panel8, wx.ID_ANY, u"Check Server Connection on Start", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBox6.Enable( False )
+		
+		bSizer46.Add( self.m_checkBox6, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		bSizer46.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		
+		sbSizer12.Add( bSizer46, 0, wx.EXPAND, 5 )
 		
 		
 		bSizer12.Add( sbSizer12, 0, wx.EXPAND, 5 )
@@ -148,13 +161,13 @@ class MainFrame ( wx.Frame ):
 		sbSizer6.Add( bSizer22, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
 		
-		bSizer12.Add( sbSizer6, 0, wx.EXPAND, 5 )
+		bSizer12.Add( sbSizer6, 0, wx.EXPAND|wx.TOP, 5 )
 		
 		
 		self.m_panel8.SetSizer( bSizer12 )
 		self.m_panel8.Layout()
 		bSizer12.Fit( self.m_panel8 )
-		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", False )
+		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", True )
 		self.m_panel9 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer2 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -602,7 +615,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel7.SetSizer( bSizer24 )
 		self.m_panel7.Layout()
 		bSizer24.Fit( self.m_panel7 )
-		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", True )
+		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", False )
 		self.m_panel71 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer241 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -818,11 +831,12 @@ class MainFrame ( wx.Frame ):
 		
 		# Connect Events
 		self.Bind( wx.EVT_SIZE, self.OnSizeMainFrame )
-		self.m_textCtrlServerUrl.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerUrl )
-		self.m_checkBoxServerPasswordShow.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxShowServerPassword )
+		self.m_comboBoxServerUrl.Bind( wx.EVT_COMBOBOX, self.OnComboboxServerUrl )
+		self.m_comboBoxServerUrl.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusComboboxServerUrl )
 		self.m_textCtrlServerUsername.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerUsername )
 		self.m_textCtrlServerPassword.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerPassword )
 		self.m_textCtrlServerPasswordShown.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusServerPassword )
+		self.m_checkBoxServerPasswordShow.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxShowServerPassword )
 		self.m_button10.Bind( wx.EVT_BUTTON, self.OnButtonClickApplyServerSettings )
 		self.m_button16.Bind( wx.EVT_BUTTON, self.OnButtonClickUploadReloadCatalogs )
 		self.m_button14.Bind( wx.EVT_BUTTON, self.OnButtonClickCatalogsDelete )
@@ -893,10 +907,10 @@ class MainFrame ( wx.Frame ):
 	def OnSizeMainFrame( self, event ):
 		event.Skip()
 	
-	def OnKillFocusServerUrl( self, event ):
+	def OnComboboxServerUrl( self, event ):
 		event.Skip()
 	
-	def OnCheckBoxShowServerPassword( self, event ):
+	def OnKillFocusComboboxServerUrl( self, event ):
 		event.Skip()
 	
 	def OnKillFocusServerUsername( self, event ):
@@ -905,6 +919,9 @@ class MainFrame ( wx.Frame ):
 	def OnKillFocusServerPassword( self, event ):
 		event.Skip()
 	
+	
+	def OnCheckBoxShowServerPassword( self, event ):
+		event.Skip()
 	
 	def OnButtonClickApplyServerSettings( self, event ):
 		event.Skip()
