@@ -55,8 +55,8 @@ class ConfigItem(object):
             return self.icache[instance]
         except KeyError:
             retval = self.rd(self.getname(instance), self.defvalue)
-            retval = self.postrd(retval)
             self.config.Flush() # in case defvalue has been used
+            retval = self.postrd(retval)
             self.icache[instance] = retval
             return retval
             

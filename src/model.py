@@ -19,10 +19,13 @@
 #
 ################################################################################
 from collections import OrderedDict
+import copy
 import datetime
 import itertools
 from operator import attrgetter
 import os
+import os.path
+import shutil
 import threading
 
 import openpyxl
@@ -62,12 +65,22 @@ class Model(object):
     lifecardattachdir = ConfigString(name='lifecardattachdir', defvalue='')
     lcdownexcelnotsave = ConfigBool(name='lcdownexcelnotsave', defvalue=False)
     lcdownkeepexcelopen = ConfigBool(name='lcdownkeepexcelopen', defvalue=False)
+    lcdownmakecopy = ConfigBool(name='lcdownmakecopy', defvalue=False)
+    lcdownfiltervendorcomments = ConfigBool(name='lcdownfiltervendorcomments', defvalue=False)
+    lcdowncopywithvendorcomments = ConfigBool(name='lcdowncopywithvendorcomments', defvalue=False)
     lcdownopen = ConfigBool(name='lcdownopen', defvalue=True)
     lcdownclosed = ConfigBool(name='lcdownclosed', defvalue=True)
     lcdownfixed = ConfigBool(name='lcdownfixed', defvalue=True)
     lcdowninvest = ConfigBool(name='lcdowninvest', defvalue=True)
     lcdownreject = ConfigBool(name='lcdownreject', defvalue=True)
     lcdownnew  = ConfigBool(name='lcdownnew', defvalue=False)
+
+    lcdownattachopen = ConfigBool(name='lcdownattachopen', defvalue=True)
+    lcdownattachclosed = ConfigBool(name='lcdownattachclosed', defvalue=True)
+    lcdownattachinvestigation = ConfigBool(name='lcdownattachinvestigation', defvalue=True)
+    lcdownattachfixed = ConfigBool(name='lcdownattachfixed', defvalue=True)
+    lcdownattachrejected = ConfigBool(name='lcdownattachrejected', defvalue=True)
+    lcdownattachnew = ConfigBool(name='lcdownattachnew', defvalue=False)
 
     lifecardexcelup = ConfigString(name='lifecardexcelup', defvalue='')
     lifecardauthorup = ConfigString(name='lifecardauthorup', defvalue='')
@@ -175,10 +188,15 @@ class Model(object):
             self.LogAppend('Excel header has %d columns' % catcols)
             self.LogAppend('Header names %s' % str(headerfields).strip('[]'))
 
-            self.LogAppend('Creating Catalog %s' % self.uploadcatalogname)
             rpcinterface = RpcInterface(self.serverurl, self.serverusername, self.serverpassword)
-            rootid = rpcinterface.createTestCatalog('', self.uploadcatalogname, tcdescription)
-            self.LogAppend('Created Catalog with id %s' % rootid)
+            if not self.uploadusecatalog:
+                self.LogAppend('Creating Catalog %s' % self.uploadcatalogname)
+                rootid = rpcinterface.createTestCatalog('', self.uploadcatalogname, tcdescription)
+                self.LogAppend('Created Catalog with id %s' % rootid)
+            else:
+                self.LogAppend('Appending to Catalog %s: id %s' % (self.uploadusecatalogname, self.uploadusecatalogid))
+                # we have set the variable uploadusecatalogid
+                rootid = self._model.uploadusecatalogid
 
             # Parse the Category and subcategory columns
             categories = dict()
@@ -464,7 +482,7 @@ class Model(object):
             multicall = rpc.multicall()
             for ticket_id in ticket_ids:
                 multicall.ticket.changeLog(ticket_id)
-            # crete the ticketchangelog objects from call result
+            # create the ticketchangelog objects from call result
             tlogs = multicall()
             tlogs = dict(zip(ticket_ids, tlogs))
             for ticket_id, clogs in tlogs.iteritems():
@@ -484,8 +502,11 @@ class Model(object):
 
             self.LogAppend('Generating Excel Data Range for tickets')
             ltrange = list()
+            if self.lcdowncopywithvendorcomments:
+                ltrange2 = list()
             for ticket in tickets:
                 if ticket.status not in tstatusdown:
+                    self.LogAppend('Skipping ticket %d with status %s' % (ticket.id, ticket.status))
                     continue
                 lticket = list()
                 lticket.extend([ticket.id, ticket.version, ticket.reporter])
@@ -518,7 +539,10 @@ class Model(object):
 
                 lticket.append(owncomment)
                 # lticket.extend(['', '', ]) # skip 2 columnts
-                lticket.append(vencomment)
+                if not self.lcdownfiltervendorcomments:
+                    lticket.append(vencomment)
+                else:
+                    lticket.append('')
 
                 resoltxt = ''
                 for resolution in filter(lambda x: x.name == 'resolution', tlog):
@@ -531,58 +555,96 @@ class Model(object):
                 lticket.append(resoltxt)
 
                 ltrange.append(lticket)
+                if self.lcdowncopywithvendorcomments:
+                    lticket2 = copy.deepcopy(lticket)
+                    lticket2[-2] = vencomment
+                    ltrange2.append(lticket2)
             # raise Exception('Ticket List Compiled')
 
             if not lrange and not ltrange:
                 self.LogAppend('Nothing to download to excel')
             else:
 
-                self.LogAppend('Opening Workbook %s' % self.lifecardexcel)
-                pythoncom.CoInitialize()
-                # xl = Dispatch('Excel.Application')
-                # xl = win32com.client.gencache.EnsureDispatchEx("Excel.Application")
-                xl = DispatchEx('Excel.Application') # Opens different instance
-                xl.Visible = 1
-                xl.Interactive = True if self.lcdownkeepexcelopen else False
-                wkbook = xl.Workbooks.Open(self.lifecardexcel)
-
-                if not lrange:
-                    self.LogAppend('No test cases to write down to Excel')
+                if self.lcdownmakecopy:
+                    curdate = datetime.date.today()
+                    prepdate = curdate.strftime('%Y-%m-%d')
+                    appcw = int(curdate.strftime('%W'))
+                    curdate.replace(month=1, day=1)
+                    if curdate.weekday != 0:
+                        # Jan 1st is not monday, so all days until
+                        # first monday are isoweek = 0 and we want
+                        # calendar week 1
+                        appcw += 1
+                    appcw = 'cw%02d' % appcw
+                    dirname, basename = os.path.split(self.lifecardexcel)
+                    excelbase, excelext = os.path.splitext(basename)
+                    basename = prepdate + '-' + excelbase + '-' + appcw + excelext
+                    excelfile = os.path.join(dirname, basename)
+                    self.LogAppend('Copying %s -> %s' % (self.lifecardexcel, excelfile))
+                    shutil.copyfile(self.lifecardexcel, excelfile)
                 else:
-                    lempty = [[''] * len(lrange[0])] * len(lrange)
+                    excelfile = self.lifecardexcel
 
-                    wksheet = wkbook.Sheets('Test Cases')
-                    if False and wksheet.AutoFilterMode:
-                        wksheet.ShowAllData()
-                    topleft = wksheet.Cells(tc_row_offset, tc_col_offset)
-                    botright = wksheet.Cells(tc_row_offset + len(lrange) - 1, tc_col_offset + len(lrange[0]) - 1)
-                    self.LogAppend('Writing Data to Worksheet')
-                    wksheet.Range(topleft, botright).Value = lempty
-                    wksheet.Range(topleft, botright).Value = lrange
-                    self.LogAppend('End downloading test-case-in-plan information')
+                if self.lcdowncopywithvendorcomments:
+                    vendirname, venbasename = os.path.split(excelfile)
+                    venname, venext = os.path.splitext(venbasename)
+                    venname += '-vendor'
+                    venbasename = venname + venext
+                    venexcelfile = os.path.join(vendirname, venbasename)
+                    shutil.copyfile(excelfile, venexcelfile)
 
-                if not ltrange:
-                    self.LogAppend('No tickets to write down to Excel')
-                else:
-                    self.LogAppend('Writing Data to Worksheet')
-                    # FIXME: if there are no tickets ... I would also need to clear the list
-                    # The property .UsedRange should give access to cells that have already
-                    # been used (I can delete the range)
-                    lempty = [['',] * len(ltrange[0])] * len(tickets)
+                exinstances = [(excelfile, ltrange),]
+                if self.lcdowncopywithvendorcomments:
+                    exinstances.append((venexcelfile, ltrange2))
 
-                    wksheet = wkbook.Sheets('Bug Tracking')
-                    if False and wksheet.AutoFilterMode:
-                        wksheet.ShowAllData()
-                    topleft = wksheet.Cells(ticket_row_offset, ticket_col_offset)
-                    botright = wksheet.Cells(ticket_row_offset + len(ltrange) - 1,
-                                             ticket_col_offset + len(ltrange[0]) - 1)
+                for excel_file, ticket_range in exinstances:
 
-                    botrightempty = wksheet.Cells(ticket_row_offset + len(tickets) - 1,
-                                                  ticket_col_offset + len(ltrange[0]) - 1)
+                    self.LogAppend('Opening Workbook %s' % excelfile)
+                    pythoncom.CoInitialize()
+                    # xl = Dispatch('Excel.Application')
+                    # xl = win32com.client.gencache.EnsureDispatchEx("Excel.Application")
+                    xl = DispatchEx('Excel.Application') # Opens different instance
+                    xl.Visible = 1
+                    xl.Interactive = True if self.lcdownkeepexcelopen else False
+                    wkbook = xl.Workbooks.Open(excel_file)
 
-                    wksheet.Range(topleft, botrightempty).Value = lempty
-                    wksheet.Range(topleft, botright).Value = ltrange
-                    self.LogAppend('End downloading tickets information')
+                    if not lrange:
+                        self.LogAppend('No test cases to write down to Excel')
+                    else:
+                        lempty = [[''] * len(lrange[0])] * len(lrange)
+
+                        wksheet = wkbook.Sheets('Test Cases')
+                        if False and wksheet.AutoFilterMode:
+                            wksheet.ShowAllData()
+                        topleft = wksheet.Cells(tc_row_offset, tc_col_offset)
+                        botright = wksheet.Cells(tc_row_offset + len(lrange) - 1, tc_col_offset + len(lrange[0]) - 1)
+                        self.LogAppend('Writing Data to Worksheet')
+                        wksheet.Range(topleft, botright).Value = lempty
+                        wksheet.Range(topleft, botright).Value = lrange
+                        self.LogAppend('End downloading test-case-in-plan information')
+
+                    if not ticket_range:
+                        self.LogAppend('No tickets to write down to Excel')
+                    else:
+                        self.LogAppend('Writing Data to Worksheet')
+                        # FIXME: if there are no tickets ... I would also need to clear the list
+                        # The property .UsedRange should give access to cells that have already
+                        # been used (I can delete the range)
+                        lempty = [['',] * len(ticket_range[0])] * len(tickets)
+
+                        wksheet = wkbook.Sheets('Bug Tracking')
+                        if False and wksheet.AutoFilterMode:
+                            wksheet.ShowAllData()
+                        topleft = wksheet.Cells(ticket_row_offset, ticket_col_offset)
+                        botright = wksheet.Cells(ticket_row_offset + len(ticket_range) - 1,
+                                                 ticket_col_offset + len(ticket_range[0]) - 1)
+
+                        botrightempty = wksheet.Cells(ticket_row_offset + len(tickets) - 1,
+                                                      ticket_col_offset + len(ticket_range[0]) - 1)
+
+                        wksheet.Range(topleft, botrightempty).Value = lempty
+                        wksheet.Range(topleft, botright).Value = ticket_range
+                        self.LogAppend('End downloading tickets information to %s' % excel_file)
 
             self.LogAppend('End downloading to Lifecard')
 
@@ -625,18 +687,30 @@ class Model(object):
             self.LogAppend('Getting tickets')
             tickets = map(Ticket, multicall())
             tickets.sort(key=attrgetter('id'))
+            self.LogAppend('Got %d ticket' % len(tickets))
 
-            self.LogAppend('Getting List of Attachments per ticket')
-            for ticket in tickets:
-                ticket.attachments = rpc.listAttachments(ticket.id)
+            tstatusdown = list()
+            tstatusdown.append('new') if self.lcdownattachnew else None
+            tstatusdown.append('open') if self.lcdownattachopen else None
+            tstatusdown.append('closed') if self.lcdownattachclosed else None
+            tstatusdown.append('fixed') if self.lcdownattachfixed else None
+            tstatusdown.append('rejected') if self.lcdownattachrejected else None
+            tstatusdown.append('investigation') if self.lcdownattachinvestigation else None
+            self.LogAppend('Will download attachment for following ticket types: %s' % str(tstatusdown))
 
             self.LogAppend('Processing attachments')
             # Time to retrieve and save
             for ticket in tickets:
-                if ticket.status in ['rejected', 'new']:
-                    self.LogAppend('Skipping %s ticket %d' % (ticket.status, ticket.id))
+                if ticket.status not in tstatusdown:
+                    self.LogAppend('Skipping ticket %d with status %s' % (ticket.id, ticket.status))
                     continue
-                self.LogAppend('Downloading Attachments for ticket %d' % ticket.id)
+
+                self.LogAppend('Getting list of attachments ticket for ticket %d' % ticket.id)
+                ticket.attachments = rpc.listAttachments(ticket.id)
+                self.LogAppend('Got %d attachments ticket for ticket %d' % (len(ticket.attachments), ticket.id))
+                if ticket.attachments:
+                    self.LogAppend('Downloading ticket %d attachments' % ticket.id)
+
                 for attach in ticket.attachments:
                     try:
                         battach = rpc.getAttachment(ticket.id, attach[0])

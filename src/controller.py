@@ -160,7 +160,8 @@ class Controller(object):
 
         if self._model.uploadusecatalog:
             item = self._view.m_choiceUploadCatalogs.GetSelection()
-            catalog = self._view.m_choiceUploadCatalogs.GetSelection(item)
+            catalog = self._view.m_choiceUploadCatalogs.GetClientData(item)
+            self._model.uploadusecatalogname = self._view.m_choiceUploadCatalogs.GetStringSelection()
             self._model.uploadusecatalogid = catalog[0]
 
         self._model.UploadExcel()
@@ -186,7 +187,6 @@ class Controller(object):
     def OnButtonClickDownloadExcel(self, event):
         self._model.DownloadExcel()
         self._view.DownloadingExcel()
-
 
     ############################################################
     # LifeCard Download
@@ -255,13 +255,52 @@ class Controller(object):
         self._model.lcdownexcelnotsave = event.IsChecked()
 
     @ViewManager
+    def OnCheckBoxLcDownMakeCopy(self, event):
+        self._model.lcdownmakecopy = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLcDownFilterVendorComments(self, event):
+        self._model.lcdownfiltervendorcomments = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLcDownCopyWithVendorComments(self, event):
+        self._model.lcdowncopywithvendorcomments = event.IsChecked()
+
+    @ViewManager
     def OnDirChangedDirAttachments(self, event):
         self._model.lifecardattachdir = self._view.m_dirPickerDirAttachments.GetPath()
 
+    ############################################################
+    # LifeCard Attachment Download
+    ############################################################
     @ViewManager
     def OnButtonClickDownloadAttachments(self, event):
         self._model.LifeCardDownloadAttach()
         self._view.LifeCardDownloadingAttach()
+
+    @ViewManager
+    def OnCheckBoxLcDownAttachOpen(self, event):
+        self._model.lcdownattachopen = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLcDownAttachClosed(self, event):
+        self._model.lcdownattachclosed = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLcDownAttachInvestigation(self, event):
+        self._model.lcdownattachinvestigation = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLcDownAttachFixed(self, event):
+        self._model.lcdownattachfixed = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLcDownAttachRejected(self, event):
+        self._model.lcdownattachrejected = event.IsChecked()
+
+    @ViewManager
+    def OnCheckBoxLcDownAttachNew(self, event):
+        self._model.lcdownattachnew = event.IsChecked()
 
     ############################################################
     # LifeCard Upload

@@ -2,7 +2,7 @@
 # -*- coding: utf-8; py-indent-offset:4 -*-
 ################################################################################
 # 
-#   Copyright (C) 2013 Daniel Rodriguez
+#   Copyright (C) 2014 Daniel Rodriguez
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -28,14 +28,14 @@ from mainframe import MainFrame
 from model import Model
 import constants
 
-appname=constants.Appname
-vendorname=constants.Vendorname
+appname=constants.AppName
+vendorname=constants.VendorName
 
 @MvcContainer
 class MainApp(wx.App):
     def OnInit(self):
-        self.name = '%s-%s' % (appname, wx.GetUserId())
-        self.instance = wx.SingleInstanceChecker(self.name)
+        self.instancename = '%s-%s' % (appname, wx.GetUserId())
+        self.instance = wx.SingleInstanceChecker(self.instancename)
         if self.instance.IsAnotherRunning():
             wx.MessageBox("Another instance is running", "ERROR")
             return False
@@ -51,6 +51,9 @@ class MainApp(wx.App):
         self._model = Model()
         self._controller = Controller()
         self._view = view = MainFrame(parent=None)
+        title = constants.AppTitle + ' - ' + constants.AppVersion
+        view.SetTitle(title)
+
         self.SetTopWindow(view)
         view.Show(True)
 

@@ -154,7 +154,7 @@ class MainFrame ( wx.Frame ):
 		self.m_panel8.SetSizer( bSizer12 )
 		self.m_panel8.Layout()
 		bSizer12.Fit( self.m_panel8 )
-		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", True )
+		self.m_notebook1.AddPage( self.m_panel8, u"Configuration", False )
 		self.m_panel9 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer2 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -262,6 +262,8 @@ class MainFrame ( wx.Frame ):
 		bSizer19.Add( self.m_staticline9, 0, wx.EXPAND |wx.ALL, 5 )
 		
 		self.m_checkBoxUploadUpdateTc = wx.CheckBox( self.m_panel9, wx.ID_ANY, u"Update Test Cases", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxUploadUpdateTc.Enable( False )
+		
 		bSizer19.Add( self.m_checkBoxUploadUpdateTc, 0, wx.ALL, 5 )
 		
 		
@@ -343,8 +345,6 @@ class MainFrame ( wx.Frame ):
 		self.m_panel7 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer24 = wx.BoxSizer( wx.VERTICAL )
 		
-		sbSizer321 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel7, wx.ID_ANY, wx.EmptyString ), wx.VERTICAL )
-		
 		fgSizer211 = wx.FlexGridSizer( 0, 2, 0, 0 )
 		fgSizer211.AddGrowableCol( 1 )
 		fgSizer211.SetFlexibleDirection( wx.BOTH )
@@ -407,79 +407,185 @@ class MainFrame ( wx.Frame ):
 		
 		bSizer31 = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.m_checkBoxDownloadExcelNotSave = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Do not save the Excel Sheet", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_checkBoxDownloadExcelNotSave = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Don't save", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer31.Add( self.m_checkBoxDownloadExcelNotSave, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_staticline24 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
 		bSizer31.Add( self.m_staticline24, 0, wx.EXPAND |wx.ALL, 5 )
 		
-		self.m_checkBoxDownloadKeepExcelOpen = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Keep Excel Open", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer31.Add( self.m_checkBoxDownloadKeepExcelOpen, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.m_checkBoxDownloadKeepExcelOpen = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Keep open", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer31.Add( self.m_checkBoxDownloadKeepExcelOpen, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL|wx.TOP|wx.BOTTOM|wx.RIGHT, 5 )
 		
 		
-		fgSizer211.Add( bSizer31, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		bSizer31.AddSpacer( ( 0, 0), 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
-		self.m_staticText16 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Attachement Dir", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticline44 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer31.Add( self.m_staticline44, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxLcDownMakeCopy = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Make Copy (Prepend Date - Append CW)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer31.Add( self.m_checkBoxLcDownMakeCopy, 0, wx.TOP|wx.BOTTOM|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		fgSizer211.Add( bSizer31, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL|wx.EXPAND, 5 )
+		
+		
+		fgSizer211.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.m_staticline55 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		fgSizer211.Add( self.m_staticline55, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		
+		fgSizer211.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		bSizer43 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBoxLcDownFilterVendorComments = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Filter Vendor Comments", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer43.Add( self.m_checkBoxLcDownFilterVendorComments, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.m_staticline441 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer43.Add( self.m_staticline441, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_staticText37 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"and", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText37.Wrap( -1 )
+		bSizer43.Add( self.m_staticText37, 0, wx.ALL, 5 )
+		
+		self.m_checkBoxLcDownCopyWithVendorComments = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Make Copy with Vendor Comments", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer43.Add( self.m_checkBoxLcDownCopyWithVendorComments, 0, wx.ALL, 5 )
+		
+		
+		fgSizer211.Add( bSizer43, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		fgSizer211.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.m_staticline261 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		fgSizer211.Add( self.m_staticline261, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_staticText241 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Download States", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText241.Wrap( -1 )
+		fgSizer211.Add( self.m_staticText241, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		bSizer402 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBoxDownloadOpen = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Open", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer402.Add( self.m_checkBoxDownloadOpen, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline122 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer402.Add( self.m_staticline122, 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBoxDownloadClosed = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Closed", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer402.Add( self.m_checkBoxDownloadClosed, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline123 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer402.Add( self.m_staticline123, 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBoxDownloadInvestigation = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Investigation", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer402.Add( self.m_checkBoxDownloadInvestigation, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline1231 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer402.Add( self.m_staticline1231, 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBoxDownloadFixed = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Fixed", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer402.Add( self.m_checkBoxDownloadFixed, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		bSizer402.AddSpacer( ( 0, 0), 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline12 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer402.Add( self.m_staticline12, 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBoxDownloadRejected = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Rejected", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer402.Add( self.m_checkBoxDownloadRejected, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		bSizer402.AddSpacer( ( 0, 0), 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline121 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer402.Add( self.m_staticline121, 0, wx.EXPAND|wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_checkBoxDownloadNew = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"New", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer402.Add( self.m_checkBoxDownloadNew, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		fgSizer211.Add( bSizer402, 1, wx.EXPAND, 5 )
+		
+		self.m_staticline22 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		fgSizer211.Add( self.m_staticline22, 0, wx.EXPAND|wx.TOP|wx.BOTTOM|wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline221 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		fgSizer211.Add( self.m_staticline221, 0, wx.EXPAND|wx.TOP|wx.BOTTOM|wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticText16 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Attachment Dir", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText16.Wrap( -1 )
 		fgSizer211.Add( self.m_staticText16, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		bSizer53 = wx.BoxSizer( wx.VERTICAL )
 		
 		self.m_dirPickerDirAttachments = wx.DirPickerCtrl( self.m_panel7, wx.ID_ANY, wx.EmptyString, u"Select a folder", wx.DefaultPosition, wx.DefaultSize, wx.DIRP_DEFAULT_STYLE )
-		bSizer53.Add( self.m_dirPickerDirAttachments, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
+		bSizer53.Add( self.m_dirPickerDirAttachments, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
 		
 		
-		fgSizer211.Add( bSizer53, 1, wx.EXPAND, 5 )
+		fgSizer211.Add( bSizer53, 1, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		
-		sbSizer321.Add( fgSizer211, 0, wx.EXPAND, 5 )
+		fgSizer211.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.m_staticline56 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		fgSizer211.Add( self.m_staticline56, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_staticText32 = wx.StaticText( self.m_panel7, wx.ID_ANY, u"Download Attachments", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText32.Wrap( -1 )
+		fgSizer211.Add( self.m_staticText32, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
+		
+		bSizer41 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_checkBoxLcDownAttachOpen = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Open", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer41.Add( self.m_checkBoxLcDownAttachOpen, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.m_staticline3111 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer41.Add( self.m_staticline3111, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxLcDownAttachClosed = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Closed", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer41.Add( self.m_checkBoxLcDownAttachClosed, 0, wx.ALL, 5 )
+		
+		self.m_staticline311 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer41.Add( self.m_staticline311, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxLcDownAttachInvestigation = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Investigation", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer41.Add( self.m_checkBoxLcDownAttachInvestigation, 0, wx.ALL, 5 )
+		
+		self.m_staticline3112 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer41.Add( self.m_staticline3112, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		self.m_checkBoxLcDownAttachFixed = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Fixed", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer41.Add( self.m_checkBoxLcDownAttachFixed, 0, wx.ALL, 5 )
 		
 		
-		bSizer24.Add( sbSizer321, 1, wx.EXPAND, 5 )
+		bSizer41.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
 		
-		sbSizer8 = wx.StaticBoxSizer( wx.StaticBox( self.m_panel7, wx.ID_ANY, u"Bug States to Download" ), wx.HORIZONTAL )
+		self.m_staticline31121 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer41.Add( self.m_staticline31121, 0, wx.EXPAND |wx.ALL, 5 )
 		
-		self.m_checkBoxDownloadOpen = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Open", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer8.Add( self.m_checkBoxDownloadOpen, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-		
-		self.m_staticline122 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
-		sbSizer8.Add( self.m_staticline122, 0, wx.EXPAND |wx.ALL, 5 )
-		
-		self.m_checkBoxDownloadClosed = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Closed", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer8.Add( self.m_checkBoxDownloadClosed, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-		
-		self.m_staticline123 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
-		sbSizer8.Add( self.m_staticline123, 0, wx.EXPAND |wx.ALL, 5 )
-		
-		self.m_checkBoxDownloadInvestigation = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Investigation", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer8.Add( self.m_checkBoxDownloadInvestigation, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-		
-		self.m_staticline1231 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
-		sbSizer8.Add( self.m_staticline1231, 0, wx.EXPAND |wx.ALL, 5 )
-		
-		self.m_checkBoxDownloadFixed = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Fixed", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer8.Add( self.m_checkBoxDownloadFixed, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.m_checkBoxLcDownAttachRejected = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Rejected", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer41.Add( self.m_checkBoxLcDownAttachRejected, 0, wx.ALL, 5 )
 		
 		
-		sbSizer8.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		bSizer41.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
 		
-		self.m_staticline12 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
-		sbSizer8.Add( self.m_staticline12, 0, wx.EXPAND |wx.ALL, 5 )
+		self.m_staticline311211 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
+		bSizer41.Add( self.m_staticline311211, 0, wx.EXPAND |wx.ALL, 5 )
 		
-		self.m_checkBoxDownloadRejected = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"Rejected", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer8.Add( self.m_checkBoxDownloadRejected, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
-		
-		
-		sbSizer8.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
-		
-		self.m_staticline121 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
-		sbSizer8.Add( self.m_staticline121, 0, wx.EXPAND |wx.ALL, 5 )
-		
-		self.m_checkBoxDownloadNew = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"New", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer8.Add( self.m_checkBoxDownloadNew, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.m_checkBoxLcDownAttachNew = wx.CheckBox( self.m_panel7, wx.ID_ANY, u"New", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer41.Add( self.m_checkBoxLcDownAttachNew, 0, wx.ALL, 5 )
 		
 		
-		bSizer24.Add( sbSizer8, 0, wx.EXPAND|wx.TOP, 5 )
+		fgSizer211.Add( bSizer41, 0, wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
+		
+		
+		bSizer24.Add( fgSizer211, 0, wx.EXPAND, 5 )
+		
+		self.m_staticline30 = wx.StaticLine( self.m_panel7, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer24.Add( self.m_staticline30, 0, wx.EXPAND |wx.ALL, 5 )
 		
 		bSizer26 = wx.BoxSizer( wx.HORIZONTAL )
 		
@@ -490,13 +596,13 @@ class MainFrame ( wx.Frame ):
 		bSizer26.Add( self.m_button17, 0, wx.ALL, 5 )
 		
 		
-		bSizer24.Add( bSizer26, 0, wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		bSizer24.Add( bSizer26, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.BOTTOM, 5 )
 		
 		
 		self.m_panel7.SetSizer( bSizer24 )
 		self.m_panel7.Layout()
 		bSizer24.Fit( self.m_panel7 )
-		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", False )
+		self.m_notebook1.AddPage( self.m_panel7, u"LifeCard Download", True )
 		self.m_panel71 = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer241 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -741,13 +847,22 @@ class MainFrame ( wx.Frame ):
 		self.m_filePickerLifeCardExcel.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChangedLifeCardExcel )
 		self.m_checkBoxDownloadExcelNotSave.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadExcelNotSave )
 		self.m_checkBoxDownloadKeepExcelOpen.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadKeepExcelOpen )
-		self.m_dirPickerDirAttachments.Bind( wx.EVT_DIRPICKER_CHANGED, self.OnDirChangedDirAttachments )
+		self.m_checkBoxLcDownMakeCopy.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLcDownMakeCopy )
+		self.m_checkBoxLcDownFilterVendorComments.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLcDownFilterVendorComments )
+		self.m_checkBoxLcDownCopyWithVendorComments.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLcDownCopyWithVendorComments )
 		self.m_checkBoxDownloadOpen.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadOpen )
 		self.m_checkBoxDownloadClosed.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadClosed )
 		self.m_checkBoxDownloadInvestigation.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadInvestigation )
 		self.m_checkBoxDownloadFixed.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadFixed )
 		self.m_checkBoxDownloadRejected.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadRejected )
 		self.m_checkBoxDownloadNew.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxDownloadNew )
+		self.m_dirPickerDirAttachments.Bind( wx.EVT_DIRPICKER_CHANGED, self.OnDirChangedDirAttachments )
+		self.m_checkBoxLcDownAttachOpen.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLcDownAttachOpen )
+		self.m_checkBoxLcDownAttachClosed.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLcDownAttachClosed )
+		self.m_checkBoxLcDownAttachInvestigation.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLcDownAttachInvestigation )
+		self.m_checkBoxLcDownAttachFixed.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLcDownAttachFixed )
+		self.m_checkBoxLcDownAttachRejected.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLcDownAttachRejected )
+		self.m_checkBoxLcDownAttachNew.Bind( wx.EVT_CHECKBOX, self.OnCheckBoxLcDownAttachNew )
 		self.m_button20.Bind( wx.EVT_BUTTON, self.OnButtonClickLifeCardDownload )
 		self.m_button17.Bind( wx.EVT_BUTTON, self.OnButtonClickDownloadAttachments )
 		self.m_filePickerLifeCardExcelUp.Bind( wx.EVT_FILEPICKER_CHANGED, self.OnFileChangedLifeCardExcelUp )
@@ -857,7 +972,13 @@ class MainFrame ( wx.Frame ):
 	def OnCheckBoxDownloadKeepExcelOpen( self, event ):
 		event.Skip()
 	
-	def OnDirChangedDirAttachments( self, event ):
+	def OnCheckBoxLcDownMakeCopy( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLcDownFilterVendorComments( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLcDownCopyWithVendorComments( self, event ):
 		event.Skip()
 	
 	def OnCheckBoxDownloadOpen( self, event ):
@@ -876,6 +997,27 @@ class MainFrame ( wx.Frame ):
 		event.Skip()
 	
 	def OnCheckBoxDownloadNew( self, event ):
+		event.Skip()
+	
+	def OnDirChangedDirAttachments( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLcDownAttachOpen( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLcDownAttachClosed( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLcDownAttachInvestigation( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLcDownAttachFixed( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLcDownAttachRejected( self, event ):
+		event.Skip()
+	
+	def OnCheckBoxLcDownAttachNew( self, event ):
 		event.Skip()
 	
 	def OnButtonClickLifeCardDownload( self, event ):
