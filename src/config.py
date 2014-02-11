@@ -109,12 +109,7 @@ class ConfigList(ConfigString):
         ConfigString.__init__(self, name, defvalue)
         
     def postrd(self, value):
-        # Do a str conversion because wx.config returns a unicode string
-        # but the pickle protocol uses ascii
-        retval = cPickle.loads(str(value))
-        if retval is None:
-            retval = list()
-        return retval
+        return cPickle.loads(value)
 
     def prewr(self, value):
         return cPickle.dumps(value)
